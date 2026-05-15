@@ -13,7 +13,6 @@ from utils.ai_tools import (
     detect_skills,
     generate_resume_recommendations,
     calculate_match_score,
-    get_skill_advice,
     enhance_resume_bullet,
     detect_enhancement_keywords
 )
@@ -25,7 +24,6 @@ from utils.recommendation_engine import generate_recommendations
 from utils.semantic_matcher import calculate_semantic_match
 from utils.smart_gap_analyzer import generate_gap_analysis
 from utils.fit_classifier import classify_job_fit
-from utils.resume_rewriter import generate_rewrite_suggestions
 from utils.action_plan_engine import generate_action_plan
 from utils.analysis_storage import (
     save_latest_analysis,
@@ -37,6 +35,8 @@ from utils.skill_trend_engine import analyze_skill_trends
 from utils.score_engine import calculate_final_fit_score
 from utils.role_classifier import classify_role_type
 from utils.critical_skills import ROLE_CRITICAL_SKILLS
+from utils.rewrite_templates import generate_resume_bullet
+
 
 
 
@@ -844,10 +844,6 @@ if page == "AI Analyzer":
             matched_skills,
             missing_skills
         )
-        rewrite_suggestions = generate_rewrite_suggestions(
-            missing_skills,
-            semantic_score
-        )
         action_plan = generate_action_plan(
             fit_analysis,
             missing_skills,
@@ -862,7 +858,6 @@ if page == "AI Analyzer":
             "missing_skills": missing_skills,
             "smart_analysis": smart_analysis,
             "fit_analysis": fit_analysis,
-            "rewrite_suggestions": rewrite_suggestions,
             "action_plan": action_plan
         }
         save_latest_analysis(latest_analysis)
@@ -876,7 +871,6 @@ if page == "AI Analyzer":
             "missing_skills": missing_skills,
             "smart_analysis": smart_analysis,
             "fit_analysis": fit_analysis,
-            "rewrite_suggestions": rewrite_suggestions,
             "action_plan": action_plan
         }
 
@@ -917,31 +911,39 @@ if page == "AI Analyzer":
         else:
             st.write("No missing skills detected.")
 
-        if missing_critical_skills:
+        # =========================
+        # RESUME IMPROVEMENT SUGGESTIONS
+        # Generates realistic resume bullet ideas
+        # based on missing skills.
+        # =========================
 
-            st.subheader("Critical Skill Gaps")
-            for skill in missing_critical_skills:
-                st.error(f"Critical Missing Skill: {skill}")
-        
-        st.subheader("Critical Skills Matched")
-        if critical_matched:
-            for skill in critical_matched:
-                st.write(f"• {skill}")
+        st.subheader("Suggested Resume Bullets")
+
+        if missing_skills:
+            for skill in missing_skills:
+                suggested_bullet = generate_resume_bullet(skill)
+                st.success(
+                    f"{skill}: {suggested_bullet}"
+                )
         else:
-            st.write("No critical skills matched.")
+            st.write("No resume improvement suggestions needed right now.")
 
-        st.subheader("Critical Skills Missing")
+        # =========================
+        # PRIORITY SKILL GAPS
+        # Highlights the most important missing skills for the detected role.
+        # =========================
+
+        st.subheader("Priority Skill Gaps")
 
         if critical_missing:
             for skill in critical_missing:
-                st.write(f"• {skill}")
+                st.error(
+                    f"{skill}: This is a higher-priority gap for this type of role. "
+                    "Consider adding a project, bullet, or experience that demonstrates this skill."
+                )
         else:
-            st.write("No critical skills missing.")
-
-        st.subheader("Skill Gap Recommendations")
-        if missing_skills:
-            for skill in missing_skills:
-                st.warning(f"{skill}: {get_skill_advice(skill)}")
+            st.write("No priority skill gaps detected.")
+        
         
         st.subheader("Smart Resume Gap Analysis")
         for insight in smart_analysis:
@@ -953,9 +955,6 @@ if page == "AI Analyzer":
         st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
         st.write(f"Recommended Action: {fit_analysis['next_action']}")
 
-        st.subheader("Resume Rewrite Suggestions")
-        for suggestion in rewrite_suggestions:
-            st.warning(suggestion)
         
         st.subheader("Resume Action Plan")
 
@@ -1004,15 +1003,14 @@ if page == "AI Analyzer":
         missing_skills = saved_analysis["missing_skills"]
         smart_analysis = saved_analysis["smart_analysis"]
         fit_analysis = saved_analysis["fit_analysis"]
-        rewrite_suggestions = saved_analysis["rewrite_suggestions"]
         action_plan = saved_analysis["action_plan"]
 
         st.subheader("Latest Saved Match Results")
 
         col1, col2, col3, col4, col5 = st.columns(5)
-        col1.metric("Keyword Match", f"{match_score}%")
-        col2.metric("Semantic Match", f"{semantic_score}%")
-        col3.metric("Final Fit Score", f"{final_fit_score}%")
+        col1.metric("Skill Match", f"{match_score}%")
+        col2.metric("Resume Alignment", f"{semantic_score}%")
+        col3.metric("JobSignal Score", f"{final_fit_score}%")
         col4.metric("Matched Skills", len(matched_skills))
         col5.metric("Missing Skills", len(missing_skills))
 
@@ -1044,10 +1042,6 @@ if page == "AI Analyzer":
         st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
         st.write(f"Recommended Action: {fit_analysis['next_action']}")
 
-        st.subheader("Resume Rewrite Suggestions")
-
-        for suggestion in rewrite_suggestions:
-            st.warning(suggestion)
 
         st.subheader("Resume Action Plan")
 

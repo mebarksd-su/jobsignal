@@ -228,26 +228,6 @@ def calculate_match_score(resume_text, job_description):
     )
 
 
-def get_skill_advice(skill):
-
-    skill_advice = {
-        "Python": "Build more Python automation or analytics projects.",
-        "SQL": "Practice SQL queries and database projects.",
-        "AWS": "Learn cloud deployment and AWS fundamentals.",
-        "Machine Learning": "Create ML prediction or classification projects.",
-        "AI": "Develop AI-focused portfolio projects and workflows.",
-        "Tableau": "Build interactive dashboards using Tableau.",
-        "Power BI": "Create business intelligence dashboards.",
-        "Communication": "Highlight teamwork, leadership, and presentation experience.",
-        "Leadership": "Show initiative through leadership roles or projects.",
-        "Excel": "Improve spreadsheet modeling and analysis skills.",
-        "GitHub": "Upload and document more coding projects publicly.",
-        "APIs": "Practice working with API integrations and external data.",
-        "Streamlit": "Deploy more interactive data applications.",
-        "Pandas": "Work more with real-world datasets and data cleaning."
-    }
-
-    return skill_advice.get(skill, f"Develop stronger experience with {skill}.")
 
 
 def enhance_resume_bullet(original_bullet):
