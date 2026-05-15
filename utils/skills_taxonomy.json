@@ -1,0 +1,261 @@
+{
+  "Programming": [
+    "python",
+    "r",
+    "sql",
+    "javascript",
+    "typescript",
+    "java",
+    "c++",
+    "html",
+    "css"
+  ],
+  "Data Analysis": [
+    "data analysis",
+    "data analytics",
+    "excel",
+    "pandas",
+    "numpy",
+    "data cleaning",
+    "data preprocessing",
+    "exploratory data analysis",
+    "eda",
+    "statistical analysis",
+    "statistics"
+  ],
+  "Business Intelligence": {
+    "tableau": [
+      "tableau"
+    ],
+    "power bi": [
+      "power bi",
+      "microsoft power bi"
+    ],
+    "dashboard": [
+      "dashboard",
+      "dashboards",
+      "reporting dashboard",
+      "bi dashboard"
+    ],
+    "reporting": [
+      "reporting",
+      "reports",
+      "report generation"
+    ],
+    "metrics": [
+      "metrics",
+      "kpi",
+      "kpis",
+      "performance metrics"
+    ],
+    "business intelligence": [
+      "business intelligence",
+      "bi"
+    ],
+    "data visualization": [
+      "data visualization",
+      "visualization",
+      "data visualizations"
+    ]
+  },
+  "Databases": {
+    "mysql": [
+      "mysql"
+    ],
+    "postgresql": [
+      "postgresql",
+      "postgres"
+    ],
+    "sql server": [
+      "sql server",
+      "microsoft sql server",
+      "ms sql server"
+    ],
+    "sqlite": [
+      "sqlite"
+    ],
+    "database": [
+      "database",
+      "databases"
+    ],
+    "data warehouse": [
+      "data warehouse",
+      "data warehousing"
+    ],
+    "etl": [
+      "etl",
+      "extract transform load"
+    ],
+    "data pipeline": [
+      "data pipeline",
+      "data pipelines"
+    ]
+  },
+
+  "AI and Machine Learning": {
+    "ai": [
+      "ai",
+      "artificial intelligence"
+    ],
+    "machine learning": [
+      "machine learning",
+      "ml"
+    ],
+    "nlp": [
+      "nlp",
+      "natural language processing"
+    ],
+    "llm": [
+      "llm",
+      "large language model",
+      "large language models"
+    ],
+    "chatbot": [
+      "chatbot",
+      "chatbots",
+      "conversational ai"
+    ],
+    "predictive modeling": [
+      "predictive modeling",
+      "predictive models"
+    ],
+    "classification": [
+      "classification",
+      "classification models"
+    ],
+    "regression": [
+      "regression",
+      "regression analysis"
+    ]
+  },
+
+  "Cloud": {
+    "aws": [
+      "aws",
+      "amazon web services"
+    ],
+    "azure": [
+      "azure",
+      "microsoft azure"
+    ],
+    "gcp": [
+      "gcp",
+      "google cloud",
+      "google cloud platform"
+    ],
+    "s3": [
+      "s3",
+      "amazon s3"
+    ],
+    "lambda": [
+      "lambda",
+      "aws lambda"
+    ],
+    "ec2": [
+      "ec2",
+      "amazon ec2"
+    ],
+    "cloud": [
+      "cloud",
+      "cloud computing"
+    ],
+    "cloud deployment": [
+      "cloud deployment",
+      "cloud deployments"
+    ]
+  },
+
+  "Automation": {
+    "automation": [
+      "automation",
+      "automated workflows"
+    ],
+    "workflow automation": [
+      "workflow automation",
+      "workflow automations"
+    ],
+    "scripting": [
+      "scripting",
+      "scripts"
+    ],
+    "process improvement": [
+      "process improvement",
+      "process optimization"
+    ],
+    "web scraping": [
+      "web scraping",
+      "scraping"
+    ],
+    "api": [
+      "api",
+      "apis",
+      "rest api"
+    ],
+    "data automation": [
+      "data automation",
+      "automated data processing"
+    ]
+  },
+
+  "Professional Skills": {
+    "communication": [
+      "communication",
+      "communications"
+    ],
+    "leadership": [
+      "leadership",
+      "team leadership"
+    ],
+    "collaboration": [
+      "collaboration",
+      "cross functional collaboration"
+    ],
+    "stakeholder": [
+      "stakeholder",
+      "stakeholders",
+      "stakeholder management"
+    ],
+    "presentation": [
+      "presentation",
+      "presentations",
+      "presenting"
+    ],
+    "documentation": [
+      "documentation",
+      "technical documentation"
+    ],
+    "technical writing": [
+      "technical writing",
+      "technical writer"
+    ],
+    "problem solving": [
+      "problem solving",
+      "problem-solving"
+    ]
+  },
+
+  "GIS": {
+    "gis": [
+      "gis",
+      "geographic information systems"
+    ],
+    "arcgis": [
+      "arcgis"
+    ],
+    "qgis": [
+      "qgis"
+    ],
+    "spatial analysis": [
+      "spatial analysis",
+      "spatial analytics"
+    ],
+    "geospatial": [
+      "geospatial",
+      "geospatial analysis"
+    ],
+    "mapping": [
+      "mapping",
+      "map creation"
+    ]
+  }
+}

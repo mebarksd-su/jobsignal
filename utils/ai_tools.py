@@ -1,25 +1,124 @@
-def detect_skills(job_description):
+import json
+import os
+from .skill_aliases import SKILL_ALIASES
+from .skill_weights import SKILL_WEIGHTS
+from .critical_skills import ROLE_CRITICAL_SKILLS
 
-    skill_keywords = [
-        "Python",
-        "SQL",
-        "Excel",
-        "Machine Learning",
-        "AI",
-        "Data Visualization",
-        "Tableau",
-        "Communication",
-        "Leadership",
-        "Cloud",
-        "AWS",
-        "Power BI"
-    ]
+
+SKILLS_TAXONOMY_FILE = os.path.join(os.path.dirname(__file__), "skills_taxonomy.json")
+
+
+# =========================
+# SKILLS TAXONOMY LOADER
+# Loads the shared analytics/AI skills taxonomy used across analyzers.
+# =========================
+
+def load_skills_taxonomy():
+
+    if not os.path.exists(SKILLS_TAXONOMY_FILE):
+        return {}
+
+    with open(SKILLS_TAXONOMY_FILE, "r") as file:
+        return json.load(file)
+
+
+
+SKILLS_DB = load_skills_taxonomy()
+
+# =========================
+# CRITICAL SKILL FLATTENER
+# Converts role-specific critical skills into one searchable set for base scoring.
+# Role-specific critical gaps are still handled separately in app.py.
+# =========================
+
+CRITICAL_SKILLS = set()
+
+for role_skills in ROLE_CRITICAL_SKILLS.values():
+    for skill in role_skills:
+        CRITICAL_SKILLS.add(skill.lower())
+
+def iter_taxonomy_skills():
+
+    for category, skill_group in SKILLS_DB.items():
+
+        if isinstance(skill_group, list):
+            for skill in skill_group:
+                yield category, skill, [skill]
+
+        elif isinstance(skill_group, dict):
+            for canonical_skill, aliases in skill_group.items():
+                yield category, canonical_skill, aliases
+
+
+# =========================
+# SKILL DISPLAY HELPERS
+# Keeps common acronyms and tool names formatted cleanly.
+# =========================
+
+def format_skill_name(skill):
+
+    skill_lower = skill.lower()
+
+    if skill_lower in SKILL_ALIASES:
+        return SKILL_ALIASES[skill_lower]
+
+    display_names = {
+        "sql": "SQL",
+        "ai": "AI",
+        "aws": "AWS",
+        "gcp": "GCP",
+        "nlp": "NLP",
+        "llm": "LLM",
+        "api": "API",
+        "apis": "APIs",
+        "html": "HTML",
+        "css": "CSS",
+        "c++": "C++",
+        "power bi": "Power BI",
+        "tableau": "Tableau",
+        "python": "Python",
+        "pandas": "Pandas",
+        "numpy": "NumPy",
+        "github": "GitHub",
+        "streamlit": "Streamlit",
+        "arcgis": "ArcGIS",
+        "qgis": "QGIS"
+    }
+
+    return display_names.get(skill_lower, skill.title())
+
+def get_skill_weight(skill):
+
+    skill_lower = skill.lower()
+
+    return SKILL_WEIGHTS.get(
+        skill_lower,
+        1
+    )
+
+def detect_skills(job_description):
 
     detected_skills = []
 
-    for skill in skill_keywords:
-        if skill.lower() in job_description.lower():
-            detected_skills.append(skill)
+    detected_names = set()
+
+    job_description_lower = job_description.lower()
+
+    for category, canonical_skill, aliases in iter_taxonomy_skills():
+
+        formatted_skill = format_skill_name(canonical_skill)
+
+        for alias in aliases:
+
+            if alias.lower() in job_description_lower:
+
+                if formatted_skill not in detected_names:
+
+                    detected_skills.append(formatted_skill)
+
+                    detected_names.add(formatted_skill)
+
+                break
 
     return detected_skills
 
@@ -56,49 +155,77 @@ def generate_resume_recommendations(detected_skills):
     return resume_recommendations
 
 
-def calculate_match_score(resume_text, job_description):
 
-    match_skills = [
-        "Python",
-        "SQL",
-        "Excel",
-        "Machine Learning",
-        "AI",
-        "Data Visualization",
-        "Tableau",
-        "Communication",
-        "Leadership",
-        "Cloud",
-        "AWS",
-        "Power BI",
-        "Streamlit",
-        "Pandas",
-        "GitHub",
-        "Automation",
-        "Data Analysis",
-        "APIs"
-    ]
+def calculate_match_score(resume_text, job_description):
 
     required_skills = []
     matched_skills = []
     missing_skills = []
 
-    for skill in match_skills:
-        if skill.lower() in job_description.lower():
-            required_skills.append(skill)
+    critical_matched = []
+    critical_missing = []
 
-    for skill in required_skills:
-        if skill.lower() in resume_text.lower():
-            matched_skills.append(skill)
-        else:
-            missing_skills.append(skill)
+    total_possible_weight = 0
+    matched_weight = 0
 
-    if len(required_skills) > 0:
-        match_score = round((len(matched_skills) / len(required_skills)) * 100, 1)
+    resume_text_lower = resume_text.lower()
+    job_description_lower = job_description.lower()
+
+    for category, canonical_skill, aliases in iter_taxonomy_skills():
+
+        formatted_skill = format_skill_name(canonical_skill)
+
+        appears_in_job = False
+        appears_in_resume = False
+
+        for alias in aliases:
+            alias_lower = alias.lower()
+
+            if alias_lower in job_description_lower:
+                appears_in_job = True
+
+            if alias_lower in resume_text_lower:
+                appears_in_resume = True
+
+        if appears_in_job:
+
+            if formatted_skill not in required_skills:
+                required_skills.append(formatted_skill)
+
+                skill_weight = get_skill_weight(formatted_skill)
+                total_possible_weight += skill_weight
+
+                if appears_in_resume:
+
+                    matched_skills.append(formatted_skill)
+                    matched_weight += skill_weight
+
+                    if canonical_skill.lower() in CRITICAL_SKILLS:
+                        critical_matched.append(formatted_skill)
+
+                else:
+
+                    missing_skills.append(formatted_skill)
+
+                    if canonical_skill.lower() in CRITICAL_SKILLS:
+                        critical_missing.append(formatted_skill)
+
+
+    if total_possible_weight > 0:
+        match_score = round(
+            (matched_weight / total_possible_weight) * 100,
+            1
+        )
     else:
         match_score = 0
 
-    return match_score, matched_skills, missing_skills
+    return (
+        match_score,
+        matched_skills,
+        missing_skills,
+        critical_matched,
+        critical_missing
+    )
 
 
 def get_skill_advice(skill):

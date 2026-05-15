@@ -23,6 +23,27 @@ from utils.skills_engine import (
 )
 from utils.recommendation_engine import generate_recommendations
 from utils.semantic_matcher import calculate_semantic_match
+from utils.smart_gap_analyzer import generate_gap_analysis
+from utils.fit_classifier import classify_job_fit
+from utils.resume_rewriter import generate_rewrite_suggestions
+from utils.action_plan_engine import generate_action_plan
+from utils.analysis_storage import (
+    save_latest_analysis,
+    load_latest_analysis,
+    save_analysis_to_history,
+    load_analysis_history
+)
+from utils.skill_trend_engine import analyze_skill_trends
+from utils.score_engine import calculate_final_fit_score
+from utils.role_classifier import classify_role_type
+from utils.critical_skills import ROLE_CRITICAL_SKILLS
+
+
+
+
+
+
+
 
 
 
@@ -75,6 +96,7 @@ if "logged_in" not in st.session_state:
 
 if not st.session_state.logged_in:
     st.subheader("Login")
+    st.write("Use one of the demo accounts to access JobSignal.")
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
@@ -89,6 +111,7 @@ if not st.session_state.logged_in:
         else:
             st.error("Invalid username or password.")
 
+    st.info("Demo accounts: malachi / jobsignal, demo / demo123, recruiter / recruiter123")
     st.stop()
 
 if "toast_message" in st.session_state:
@@ -98,6 +121,10 @@ if "toast_message" in st.session_state:
 if "success_message" in st.session_state:
     st.success(st.session_state["success_message"])
     del st.session_state["success_message"]
+
+if "current_user_name" in st.session_state:
+    st.sidebar.write(f"Logged in as: {st.session_state['current_user_name']}")
+    st.sidebar.caption(f"Role: {st.session_state['current_user_role']}")
 
 if st.sidebar.button("Logout"):
     logout_user()
@@ -653,6 +680,107 @@ if page == "AI Analyzer":
             st.write(f"• {recommendation}")
 
     # -------------------------
+    # ANALYSIS HISTORY VIEWER
+    # Shows saved resume analysis history and score trends.
+    # -------------------------
+
+    st.header("Resume Analysis History")
+
+    analysis_history = load_analysis_history()
+    skill_trends = analyze_skill_trends(
+        analysis_history
+    )
+
+    if len(analysis_history) > 0:
+
+        total_analyses = len(analysis_history)
+
+        match_scores = [
+            record["analysis"].get(
+                "final_fit_score",
+                record["analysis"]["match_score"]
+            )
+            for record in analysis_history
+        ]
+
+        semantic_scores = [
+            record["analysis"]["semantic_score"]
+            for record in analysis_history
+        ]
+
+        latest_record = analysis_history[-1]
+        latest_score = latest_record["analysis"].get(
+            "final_fit_score",
+            latest_record["analysis"]["match_score"]
+        )
+        best_score = max(match_scores)
+        average_score = round(sum(match_scores) / len(match_scores), 1)
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        col1.metric("Saved Analyses", total_analyses)
+        col2.metric("Latest Match Score", f"{latest_score}%")
+        col3.metric("Best Match Score", f"{best_score}%")
+        col4.metric("Average Match Score", f"{average_score}%")
+
+        all_missing_skills = []
+
+        st.subheader("Top Resume Strengths")
+
+        if len(skill_trends["trending_strengths"]) > 0:
+
+            for skill, count in skill_trends["trending_strengths"]:
+                st.success(
+                    f"{skill} appeared as a matched skill in {count} analyses."
+                )
+        
+        st.subheader("Top Skill Gaps")
+
+        if len(skill_trends["trending_missing"]) > 0:
+
+            for skill, count in skill_trends["trending_missing"]:
+                st.warning(
+                    f"{skill} appeared as a missing skill in {count} analyses."
+                )
+
+        for record in analysis_history:
+            all_missing_skills.extend(
+                record["analysis"]["missing_skills"]
+            )
+
+        if len(all_missing_skills) > 0:
+            missing_skill_counts = pd.Series(all_missing_skills).value_counts()
+
+            st.subheader("Most Common Missing Skills")
+            st.bar_chart(missing_skill_counts)
+
+        st.subheader("Recent Analysis History")
+
+        history_rows = []
+
+        for record in analysis_history[-5:]:
+            history_rows.append({
+                "Timestamp": record["timestamp"],
+                "Final Fit Score": record["analysis"].get(
+                    "final_fit_score",
+                    record["analysis"]["match_score"]
+                ),
+                "Semantic Score": record["analysis"]["semantic_score"],
+                "Matched Skills": len(record["analysis"]["matched_skills"]),
+                "Missing Skills": len(record["analysis"]["missing_skills"])
+            })
+
+        history_df = pd.DataFrame(history_rows)
+
+        st.dataframe(
+            history_df,
+            width="stretch"
+        )
+
+    else:
+        st.info("No resume analyses saved yet.")
+
+    # -------------------------
     # RESUME MATCH SCORING
     # Compares resume content against job description keywords.
     # -------------------------
@@ -671,8 +799,17 @@ if page == "AI Analyzer":
 
     match_button = st.button("Calculate Match Score")
 
+    saved_analysis = load_latest_analysis()
+
     if match_button:
-        match_score, matched_skills, missing_skills = calculate_match_score(
+        (
+            match_score,
+            matched_skills,
+            missing_skills,
+            critical_matched,
+            critical_missing
+        ) = calculate_match_score(
+
             resume_text,
             match_job_description
         )
@@ -681,13 +818,203 @@ if page == "AI Analyzer":
             match_job_description
         )
 
+        role_type = classify_role_type(match_job_description)
+        critical_skills = ROLE_CRITICAL_SKILLS.get(role_type, [])
+
+        missing_critical_skills = []
+
+        for skill in critical_skills:
+            if skill.lower() not in [
+                s.lower() for s in matched_skills
+            ]:
+                missing_critical_skills.append(skill)
+
+        final_fit_score = calculate_final_fit_score(
+            match_score,
+            semantic_score
+        )
+        smart_analysis = generate_gap_analysis(
+            matched_skills,
+            missing_skills,
+            semantic_score
+        )
+        fit_analysis = classify_job_fit(
+            match_score,
+            semantic_score,
+            matched_skills,
+            missing_skills
+        )
+        rewrite_suggestions = generate_rewrite_suggestions(
+            missing_skills,
+            semantic_score
+        )
+        action_plan = generate_action_plan(
+            fit_analysis,
+            missing_skills,
+            semantic_score
+        )
+        latest_analysis = {
+            "match_score": match_score,
+            "semantic_score": semantic_score,
+            "role_type": role_type,
+            "final_fit_score": final_fit_score,
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills,
+            "smart_analysis": smart_analysis,
+            "fit_analysis": fit_analysis,
+            "rewrite_suggestions": rewrite_suggestions,
+            "action_plan": action_plan
+        }
+        save_latest_analysis(latest_analysis)
+        save_analysis_to_history(latest_analysis)
+
+        st.session_state["latest_match_results"] = {
+            "match_score": match_score,
+            "semantic_score": semantic_score,
+            "role_type": role_type,
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills,
+            "smart_analysis": smart_analysis,
+            "fit_analysis": fit_analysis,
+            "rewrite_suggestions": rewrite_suggestions,
+            "action_plan": action_plan
+        }
+
         st.subheader("Match Results")
 
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Match Score", f"{match_score}%")
-        col2.metric("Matched Skills", len(matched_skills))
-        col3.metric("Missing Skills", len(missing_skills))
-        col4.metric("Semantic Match", f"{semantic_score}%")
+        col1, col2, col3, col4, col5 = st.columns(5)
+        col1.metric("Skill Match", f"{match_score}%")
+        col2.metric("Resume Alignment", f"{semantic_score}%")
+        col3.metric("JobSignal Score", f"{final_fit_score}%")
+        col4.metric("Matched Skills", len(matched_skills))
+        col5.metric("Missing Skills", len(missing_skills))
+
+        st.info(f"Detected Role Type: {role_type}")
+
+        st.subheader("Critical Skill Analysis")
+
+        col6, col7 = st.columns(2)
+        col6.metric(
+            "Critical Skills Matched",
+        len(critical_matched)
+        )
+        col7.metric(
+            "Critical Skills Missing",
+            len(critical_missing)
+        )
+
+        st.subheader("Matched Skills")
+        if matched_skills:
+            for skill in matched_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No matching skills found.")
+
+        st.subheader("Missing Skills")
+        if missing_skills:
+            for skill in missing_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No missing skills detected.")
+
+        if missing_critical_skills:
+
+            st.subheader("Critical Skill Gaps")
+            for skill in missing_critical_skills:
+                st.error(f"Critical Missing Skill: {skill}")
+        
+        st.subheader("Critical Skills Matched")
+        if critical_matched:
+            for skill in critical_matched:
+                st.write(f"• {skill}")
+        else:
+            st.write("No critical skills matched.")
+
+        st.subheader("Critical Skills Missing")
+
+        if critical_missing:
+            for skill in critical_missing:
+                st.write(f"• {skill}")
+        else:
+            st.write("No critical skills missing.")
+
+        st.subheader("Skill Gap Recommendations")
+        if missing_skills:
+            for skill in missing_skills:
+                st.warning(f"{skill}: {get_skill_advice(skill)}")
+        
+        st.subheader("Smart Resume Gap Analysis")
+        for insight in smart_analysis:
+            st.info(insight)
+
+        st.subheader("AI Fit Classification")
+        st.info(f"Fit Category: {fit_analysis['label']}")
+        st.write(f"Summary: {fit_analysis['summary']}")
+        st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
+        st.write(f"Recommended Action: {fit_analysis['next_action']}")
+
+        st.subheader("Resume Rewrite Suggestions")
+        for suggestion in rewrite_suggestions:
+            st.warning(suggestion)
+        
+        st.subheader("Resume Action Plan")
+
+        for item in action_plan:
+
+            st.markdown(f"### {item['title']}")
+
+            st.write("**Why This Matters**")
+            st.write(item["why_it_matters"])
+
+            st.write("**Suggested Improvement**")
+            st.write(item["suggested_project"])
+
+            st.write("**Skills You’ll Gain**")
+
+            for skill in item["skills_gained"]:
+                st.write(f"• {skill}")
+
+            st.write("**Resources**")
+
+            for resource in item["resources"]:
+                st.markdown(
+                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
+                )
+
+            st.write(f"**Difficulty:** {item['difficulty']}")
+            st.write(f"**Estimated Time:** {item['estimated_time']}")
+
+            st.divider()
+
+        st.subheader("Recommendation")
+
+        if final_fit_score >= 80:
+            st.success("Strong fit. This resume appears well aligned with the role.")
+        elif final_fit_score >= 50:
+            st.warning("Moderate fit. Tailor your resume before applying.")
+        else:
+            st.error("Weak fit. This resume needs stronger alignment before applying.")
+
+    elif saved_analysis:
+
+        match_score = saved_analysis["match_score"]
+        semantic_score = saved_analysis["semantic_score"]
+        final_fit_score = saved_analysis.get("final_fit_score", match_score)
+        matched_skills = saved_analysis["matched_skills"]
+        missing_skills = saved_analysis["missing_skills"]
+        smart_analysis = saved_analysis["smart_analysis"]
+        fit_analysis = saved_analysis["fit_analysis"]
+        rewrite_suggestions = saved_analysis["rewrite_suggestions"]
+        action_plan = saved_analysis["action_plan"]
+
+        st.subheader("Latest Saved Match Results")
+
+        col1, col2, col3, col4, col5 = st.columns(5)
+        col1.metric("Keyword Match", f"{match_score}%")
+        col2.metric("Semantic Match", f"{semantic_score}%")
+        col3.metric("Final Fit Score", f"{final_fit_score}%")
+        col4.metric("Matched Skills", len(matched_skills))
+        col5.metric("Missing Skills", len(missing_skills))
 
         st.subheader("Matched Skills")
 
@@ -705,20 +1032,51 @@ if page == "AI Analyzer":
         else:
             st.write("No missing skills detected.")
 
-        st.subheader("Skill Gap Recommendations")
+        st.subheader("Smart Resume Gap Analysis")
 
-        if missing_skills:
-            for skill in missing_skills:
-                st.warning(f"{skill}: {get_skill_advice(skill)}")
+        for insight in smart_analysis:
+            st.info(insight)
 
-        st.subheader("Recommendation")
+        st.subheader("AI Fit Classification")
 
-        if match_score >= 80:
-            st.success("Strong match. This role aligns well with your current resume.")
-        elif match_score >= 50:
-            st.warning("Moderate match. You should tailor your resume before applying.")
-        else:
-            st.error("Weak match. This role may require skills that are not clearly shown in your resume.")
+        st.info(f"Fit Category: {fit_analysis['label']}")
+        st.write(f"Summary: {fit_analysis['summary']}")
+        st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
+        st.write(f"Recommended Action: {fit_analysis['next_action']}")
+
+        st.subheader("Resume Rewrite Suggestions")
+
+        for suggestion in rewrite_suggestions:
+            st.warning(suggestion)
+
+        st.subheader("Resume Action Plan")
+
+        for item in action_plan:
+
+            st.markdown(f"### {item['title']}")
+
+            st.write("**Why This Matters**")
+            st.write(item["why_it_matters"])
+
+            st.write("**Suggested Improvement**")
+            st.write(item["suggested_project"])
+
+            st.write("**Skills You’ll Gain**")
+
+            for skill in item["skills_gained"]:
+                st.write(f"• {skill}")
+
+            st.write("**Resources**")
+
+            for resource in item["resources"]:
+                st.markdown(
+                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
+                )
+
+            st.write(f"**Difficulty:** {item['difficulty']}")
+            st.write(f"**Estimated Time:** {item['estimated_time']}")
+
+            st.divider()
     # -------------------------
     # RESUME BULLET ENHANCER
     # Strengthens weak resume bullets and improves ATS alignment.
