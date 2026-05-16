@@ -3,7 +3,7 @@ def classify_job_fit(match_score, semantic_score, matched_skills, missing_skills
     fit_result = {
         "label": "",
         "summary": "",
-        "tailoring_level": "",
+        "effort_level": "",
         "next_action": ""
     }
 
@@ -11,73 +11,73 @@ def classify_job_fit(match_score, semantic_score, matched_skills, missing_skills
     missing_count = len(missing_skills)
 
     # -------------------------
-    # Strong Overall Fit
+    # Strong Overall Alignment
     # -------------------------
 
     if match_score >= 75 and semantic_score >= 40 and matched_count >= missing_count:
-        fit_result["label"] = "Strong Fit"
+        fit_result["label"] = "Ready to Apply"
         fit_result["summary"] = (
-            "Your resume shows strong skill coverage and solid language alignment with this role."
+            "Your resume already lines up well with this role and shows a strong mix of relevant skills and experience."
         )
-        fit_result["tailoring_level"] = "Light Tailoring"
+        fit_result["effort_level"] = "Small Edits"
         fit_result["next_action"] = (
-            "Apply with a lightly tailored resume and emphasize your strongest matching skills."
+            "You’re in a strong spot. Make a few small edits so your best experience stands out right away."
         )
 
     # -------------------------
-    # Keyword Strong, Semantic Weak
+    # Strong Skills, Weak Wording
     # -------------------------
 
     elif match_score >= 70 and semantic_score < 40:
-        fit_result["label"] = "Good Skill Match, Needs Better Wording"
+        fit_result["label"] = "Strong Skills, Needs Clearer Wording"
         fit_result["summary"] = (
-            "Your resume contains several required skills, but the overall wording does not closely match the job description."
+            "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description."
         )
-        fit_result["tailoring_level"] = "Moderate Tailoring"
+        fit_result["effort_level"] = "Moderate Edits"
         fit_result["next_action"] = (
-            "Rewrite bullets to mirror the job description more closely and include role-specific language."
+            "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
         )
 
     # -------------------------
-    # Semantic Strong, Skill Gaps Present
+    # Strong Wording, Skill Gaps Present
     # -------------------------
 
     elif semantic_score >= 40 and missing_count > matched_count:
-        fit_result["label"] = "Language Fit Strong, Skill Coverage Weak"
+        fit_result["label"] = "Good Wording, Missing Key Skills"
         fit_result["summary"] = (
-            "Your resume language aligns with the role, but several required skills are missing."
+            "Your resume sounds aligned with the role overall, but there are still a few important skills or tools that are not clearly represented yet."
         )
-        fit_result["tailoring_level"] = "Moderate Tailoring"
+        fit_result["effort_level"] = "Moderate Edits"
         fit_result["next_action"] = (
-            "Add missing technical skills only if you genuinely have experience with them."
+            "If you genuinely have experience with the missing skills, make them easier to spot. Otherwise, consider building a small project to strengthen that area."
         )
 
     # -------------------------
-    # Moderate Fit
+    # Moderate Alignment
     # -------------------------
 
     elif match_score >= 50:
-        fit_result["label"] = "Moderate Fit"
+        fit_result["label"] = "Some Match, Needs Focus"
         fit_result["summary"] = (
-            "Your resume has some alignment with the role, but it needs stronger targeting before applying."
+            "Your background connects with parts of this role, but the resume still feels too general for this specific position."
         )
-        fit_result["tailoring_level"] = "Moderate Tailoring"
+        fit_result["effort_level"] = "Moderate Edits"
         fit_result["next_action"] = (
-            "Tailor your resume bullets toward the missing skills and the role's main responsibilities."
+            "Focus your strongest experiences around the responsibilities and skills emphasized in the posting."
         )
 
     # -------------------------
-    # Weak Fit
+    # Low Alignment
     # -------------------------
 
     else:
-        fit_result["label"] = "Weak Fit"
+        fit_result["label"] = "Needs More Role Evidence"
         fit_result["summary"] = (
-            "Your resume does not currently show enough alignment with this job description."
+            "Right now, the resume does not show enough clear evidence for what this role is asking for."
         )
-        fit_result["tailoring_level"] = "Heavy Tailoring"
+        fit_result["effort_level"] = "Major Updates"
         fit_result["next_action"] = (
-            "Only apply if this role is important to you, and heavily tailor the resume first."
+            "This may be a stretch role for now. Strengthen the resume with more relevant skills, projects, or experience before relying on it for this kind of application."
         )
 
     return fit_result

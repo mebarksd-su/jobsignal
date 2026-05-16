@@ -9,7 +9,7 @@ import streamlit as st
 
 DEMO_USERS = {
     "malachi": {
-        "password": "jobsignal",
+        "password": "roleradar",
         "name": "Malachi",
         "role": "Owner"
     },

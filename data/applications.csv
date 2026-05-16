@@ -3,15 +3,16 @@ Date Added,Company,Role,Location,Status,Job Link,Notes,Work Arrangement,Days Sin
 xnnne
 smx
 
-",Not Specified,1.0,Fresh,Wait for response,High Priority
-2026-05-11,TEST4,Data analyst intern,FL,Interviewing,,,Not Specified,1.0,Fresh,Wait for response,High Priority
-2026-05-11,Google,Data analyst intern,Boston,Interviewing,,,Not Specified,1.0,Fresh,Wait for response,High Priority
-2026-05-11,JP Morgan,Data analyst intern,Philidelphia,Offer,,,Not Specified,1.0,Fresh,No action needed,High Priority
+",Not Specified,4.0,Fresh,Wait for response,High Priority
+2026-05-11,TEST4,Data analyst intern,FL,Interviewing,,,Not Specified,4.0,Fresh,Wait for response,High Priority
+2026-05-11,Google,Data analyst intern,Boston,Interviewing,,,Not Specified,4.0,Fresh,Wait for response,High Priority
+2026-05-11,JP Morgan,Data analyst intern,Philidelphia,Offer,,,Not Specified,4.0,Fresh,No action needed,High Priority
 2026-05-11,Upstate Medical,Data analyst intern,Syracuse,Offer,,"lets go!!!
-",Not Specified,1.0,Fresh,No action needed,High Priority
-2026-05-11,Apple,Intern,CA,Offer,,,Remote,1.0,Fresh,No action needed,High Priority
-2026-05-12,Sony Music,Data Intern,NYC,Offer,,I cant wait,Hybrid,0.0,Fresh,No action needed,High Priority
-2026-05-12,Cowboy City,Head Data Sherrif,Texas,Applied,,,On-site,0.0,Fresh,Wait for response,Medium Priority
-2026-05-12,Mcdonalds Corp,Data Analyst,Mn,Applied,,,Remote,0.0,Fresh,Wait for response,Medium Priority
-2026-05-12,TEST5,Analyst,Va,Interviewing,,,Hybrid,0.0,Fresh,Wait for response,High Priority
-2026-05-12,TEST6,Analyst,MA,Interviewing,,,Not Specified,,,,
+",Not Specified,4.0,Fresh,No action needed,High Priority
+2026-05-11,Apple,Intern,CA,Offer,,,Remote,4.0,Fresh,No action needed,High Priority
+2026-05-12,Sony Music,Data Intern,NYC,Offer,,I cant wait,Hybrid,3.0,Fresh,No action needed,High Priority
+2026-05-12,Cowboy City,Head Data Sherrif,Texas,Applied,,,On-site,3.0,Fresh,Wait for response,Medium Priority
+2026-05-12,Mcdonalds Corp,Data Analyst,Mn,Applied,,,Remote,3.0,Fresh,Wait for response,Medium Priority
+2026-05-12,TEST5,Analyst,Va,Interviewing,,,Hybrid,3.0,Fresh,Wait for response,High Priority
+2026-05-12,TEST6,Analyst,MA,Interviewing,,,Not Specified,3.0,Fresh,Wait for response,High Priority
+2026-05-15,Spotify,Data Analytics Intern,Not Specified,Rejected,https://careers.spotify.com/us/en/job/spotify-data-analytics-intern,,Remote,,,,

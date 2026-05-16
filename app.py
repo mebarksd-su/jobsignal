@@ -4,8 +4,9 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
+from urllib.parse import urlparse, unquote
+import re
 import os
-import matplotlib.pyplot as plt
 from utils.auth import login_user, logout_user
 from utils.data_manager import load_applications, save_applications
 from utils.analytics import add_analytics_columns
@@ -36,6 +37,11 @@ from utils.score_engine import calculate_final_fit_score
 from utils.role_classifier import classify_role_type
 from utils.critical_skills import ROLE_CRITICAL_SKILLS
 from utils.rewrite_templates import generate_resume_bullet
+from utils.resume_parser import extract_resume_text
+from utils.section_parser import (
+    extract_skills_section
+)
+from utils.signal_strength import calculate_signal_strength
 
 
 
@@ -47,6 +53,168 @@ from utils.rewrite_templates import generate_resume_bullet
 
 
 
+def clean_url_words(text):
+    words = re.findall(r"[a-zA-Z]+", text.lower())
+
+    ignored_words = {
+        "job",
+        "jobs",
+        "careers",
+        "career",
+        "apply",
+        "application",
+        "posting",
+        "details",
+        "view",
+        "req",
+        "requisition",
+        "opportunity",
+        "opportunities",
+        "search",
+        "description",
+        "external",
+        "en",
+        "us",
+        "usa",
+        "remote",
+        "hybrid",
+        "onsite",
+        "on",
+        "site",
+        "student",
+        "students",
+        # "internship",
+        # "intern",
+        "fulltime",
+        "full",
+        "time"
+    }
+
+    return [
+        word for word in words
+        if word not in ignored_words and len(word) > 2
+    ]
+
+
+
+def format_guess(text):
+    return text.replace("-", " ").replace("_", " ").strip().title()
+
+
+
+def infer_application_details_from_link(job_link):
+    parsed = urlparse(job_link)
+    domain = parsed.netloc.lower().replace("www.", "")
+    path = unquote(parsed.path.lower())
+    query = unquote(parsed.query.lower())
+
+    company_guess = ""
+    role_guess = ""
+    notes = []
+
+    domain_parts = [part for part in domain.split(".") if part]
+    path_parts = [part for part in path.split("/") if part]
+
+    # -------------------------
+    # GREENHOUSE
+    # Common format: boards.greenhouse.io/company/jobs/12345
+    # -------------------------
+
+    if "greenhouse" in domain:
+        if len(path_parts) > 0:
+            company_guess = format_guess(path_parts[0])
+        notes.append("Detected Greenhouse job link.")
+
+    # -------------------------
+    # LEVER
+    # Common format: jobs.lever.co/company/job-id
+    # -------------------------
+
+    elif "lever.co" in domain:
+        if len(path_parts) > 0:
+            company_guess = format_guess(path_parts[0])
+        notes.append("Detected Lever job link.")
+
+    # -------------------------
+    # WORKDAY
+    # Common format often uses company subdomain or path title slugs.
+    # -------------------------
+
+    elif "workdayjobs" in domain or "myworkdayjobs" in domain:
+        if len(domain_parts) > 0:
+            company_guess = format_guess(domain_parts[0])
+        notes.append("Detected Workday job link.")
+
+    # -------------------------
+    # LINKEDIN
+    # LinkedIn URLs often hide company data, so role guessing is limited.
+    # -------------------------
+
+    elif "linkedin" in domain:
+        notes.append("Detected LinkedIn job link. Company auto-fill may be limited from the URL alone.")
+
+    # -------------------------
+    # HANDSHAKE
+    # Handshake often hides useful details behind login/session routing.
+    # -------------------------
+
+    elif "handshake" in domain:
+        notes.append("Detected Handshake job link. Job details may need to be entered manually.")
+
+    # -------------------------
+    # INDEED
+    # Indeed often uses IDs and query parameters instead of readable titles.
+    # -------------------------
+
+    elif "indeed" in domain:
+        notes.append("Detected Indeed job link. Job details may need to be entered manually.")
+
+    # -------------------------
+    # GENERIC COMPANY / CAREERS SITE
+    # Uses the domain as a company guess when it is not a known job board.
+    # -------------------------
+
+    else:
+        platform_words = {
+            "jobs",
+            "careers",
+            "boards",
+            "apply",
+            "recruiting",
+            "talent"
+        }
+
+        if len(domain_parts) > 0:
+            first_domain_part = domain_parts[0]
+
+            if first_domain_part in ["careers", "jobs"] and len(domain_parts) > 1:
+                company_guess = format_guess(domain_parts[1])
+            elif first_domain_part not in platform_words:
+                company_guess = format_guess(first_domain_part)
+
+    # -------------------------
+    # ROLE GUESSING
+    # Pulls readable role words from the URL path and query string.
+    # -------------------------
+
+    combined_text = f"{path} {query}"
+    role_words = clean_url_words(combined_text)
+
+    if company_guess:
+        company_words = company_guess.lower().split()
+        role_words = [
+            word for word in role_words
+            if word not in company_words
+        ]
+
+    if len(role_words) >= 2:
+        role_guess = " ".join(role_words[-7:]).title()
+
+    return {
+        "company": company_guess,
+        "role": role_guess,
+        "notes": notes
+    }
 
 
 
@@ -54,13 +222,14 @@ from utils.rewrite_templates import generate_resume_bullet
 # PAGE CONFIGURATION + NAVIGATION
 # =========================
 
-st.set_page_config(page_title="JobSignal", layout="wide")
+st.set_page_config(page_title="RoleRadar", layout="wide")
 
 page = st.sidebar.radio(
     "Navigation",
     [
-        "Application Tracker",
-        "AI Analyzer"
+        "Command Center",
+        "Radar Lab",
+        "Help"
     ]
 )
 
@@ -85,7 +254,8 @@ df = add_analytics_columns(df)
 # Shared UI elements used across the app.
 # =========================
 
-st.title("JobSignal")
+st.title("RoleRadar")
+st.caption("Career intelligence for modern applicants.")
 
 # =========================
 # DEMO LOGIN GATE
@@ -96,7 +266,7 @@ if "logged_in" not in st.session_state:
 
 if not st.session_state.logged_in:
     st.subheader("Login")
-    st.write("Use one of the demo accounts to access JobSignal.")
+    st.write("Use one of the demo accounts to access RoleRadar.")
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
@@ -111,7 +281,7 @@ if not st.session_state.logged_in:
         else:
             st.error("Invalid username or password.")
 
-    st.info("Demo accounts: malachi / jobsignal, demo / demo123, recruiter / recruiter123")
+    st.info("Demo accounts: malachi / roleradar, demo / demo123, recruiter / recruiter123")
     st.stop()
 
 if "toast_message" in st.session_state:
@@ -126,9 +296,78 @@ if "current_user_name" in st.session_state:
     st.sidebar.write(f"Logged in as: {st.session_state['current_user_name']}")
     st.sidebar.caption(f"Role: {st.session_state['current_user_role']}")
 
+
 if st.sidebar.button("Logout"):
     logout_user()
     st.rerun()
+
+
+# =========================
+# HELP PAGE
+# Explains the major RoleRadar tools in plain language.
+# This page also helps demo viewers understand what the app can do.
+# =========================
+
+if page == "Help":
+    st.header("RoleRadar Guide")
+    st.write(
+        "Use this page as a quick guide to RoleRadar's main tools, scores, and workflow."
+    )
+
+    st.subheader("Command Center")
+    st.write(
+        "Track job applications, statuses, notes, links, follow-up activity, and application trends in one place."
+    )
+
+    st.subheader("Smart Application Intake")
+    st.write(
+        "Paste a job link and RoleRadar will try to auto-fill the company name and job title. "
+        "Some platforms hide job details behind IDs, redirects, or login pages, so users should always review the fields before saving."
+    )
+
+    st.subheader("Radar Lab")
+    st.write(
+        "Upload a resume PDF and paste a job description to compare your resume against a specific role. "
+        "RoleRadar checks skill overlap, wording alignment, priority gaps, and improvement steps."
+    )
+
+    st.subheader("RadarScore")
+    st.write(
+        "RadarScore combines skill match and resume alignment into one overall role-fit score. "
+        "It is a decision-support score, not a hiring prediction."
+    )
+
+    st.subheader("Radar Strength")
+    st.write(
+        "Radar Strength measures how reliable the analysis is based on resume structure and detected evidence. "
+        "A clear skills section and strong detected evidence increase this score."
+    )
+
+    st.subheader("Priority Skill Analysis")
+    st.write(
+        "Priority Skill Analysis highlights the most important missing skills for the detected role type. "
+        "This helps users focus on the gaps that matter most instead of treating every missing keyword equally."
+    )
+
+    st.subheader("Resume Action Plan")
+    st.write(
+        "The Resume Action Plan turns missing skills and weak alignment areas into practical next steps, "
+        "including resume edits, small projects, and skill-building resources."
+    )
+
+    st.subheader("Follow-Up Generator")
+    st.write(
+        "The Follow-Up Generator creates draft messages based on saved applications, including post-application follow-ups, "
+        "interview thank-you notes, and recruiter networking messages."
+    )
+
+    st.subheader("Current MVP Limitations")
+    st.write(
+        "RoleRadar currently uses structured parsing, scoring logic, and template-based guidance. "
+        "Future versions can add deeper AI extraction, stronger job-link parsing, and smarter resume rewriting."
+    )
+
+    st.stop()
 
 
 # =========================
@@ -136,76 +375,118 @@ if st.sidebar.button("Logout"):
 # Main dashboard for tracking, editing, filtering, and analyzing applications.
 # =========================
 
-if page == "Application Tracker":
-    st.write("AI-powered internship and job application tracker.")
+if page == "Command Center":
+    st.write("Track applications, monitor progress, and turn job search activity into career intelligence.")
 
     # -------------------------
     # ADD NEW APPLICATION FORM
+    # Kept inside an expander so the dashboard stays first and the form does not dominate the page.
     # -------------------------
 
-    st.header("Add New Application")
+    with st.expander(
+            "Add New Application",
+            expanded=st.session_state.get("add_app_expanded", False)
+    ):
 
-    if "company" not in st.session_state:
-        st.session_state.company = ""
+        st.header("Add New Application")
 
-    if "role" not in st.session_state:
-        st.session_state.role = ""
+        if "company" not in st.session_state:
+            st.session_state.company = ""
 
-    if "location" not in st.session_state:
-        st.session_state.location = ""
+        if "role" not in st.session_state:
+            st.session_state.role = ""
 
-    if "job_link" not in st.session_state:
-        st.session_state.job_link = ""
+        if "location" not in st.session_state:
+            st.session_state.location = ""
 
-    if "notes" not in st.session_state:
-        st.session_state.notes = ""
+        if "job_link" not in st.session_state:
+            st.session_state.job_link = ""
 
-    company = st.text_input("Company Name", key="company")
-    role = st.text_input("Job Title", key="role")
-    location = st.text_input("Location", key="location")
+        if "notes" not in st.session_state:
+            st.session_state.notes = ""
 
-    work_arrangement = st.selectbox(
-        "Work Arrangement",
-        ["Not Specified", "Remote", "Hybrid", "On-site"]
-    )
+        job_link = st.text_input("Job Link", key="job_link")
 
-    status = st.selectbox(
-        "Application Status",
-        ["Applied", "Interviewing", "Rejected", "Offer"]
-    )
+        auto_fill_button = st.button("Try Auto-Fill from Job Link")
 
-    job_link = st.text_input("Job Link", key="job_link")
-    notes = st.text_area("Notes", key="notes")
+        if auto_fill_button:
+            if st.session_state.job_link.strip() == "":
+                st.warning("Paste a job link first, then try auto-fill.")
+            else:
+                inferred_details = infer_application_details_from_link(
+                    st.session_state.job_link
+                )
 
-    submit_button = st.button("Add Application")
+                parser_notes = inferred_details.get("notes", [])
 
-    if submit_button:
-        if company.strip() == "" or role.strip() == "":
-            st.error("Company name and job title are required.")
-        else:
-            new_application = {
-                "Date Added": str(date.today()),
-                "Company": company.strip(),
-                "Role": role.strip(),
-                "Location": location.strip(),
-                "Work Arrangement": work_arrangement,
-                "Status": status,
-                "Job Link": job_link.strip(),
-                "Notes": notes.strip()
-            }
+                st.session_state.company = ""
+                st.session_state.role = ""
 
-            df = pd.concat([df, pd.DataFrame([new_application])], ignore_index=True)
-            save_applications(df)
+                if inferred_details["company"]:
+                    st.session_state.company = inferred_details["company"]
 
-            st.session_state["success_message"] = "Application saved successfully."
+                if inferred_details["role"]:
+                    st.session_state.role = inferred_details["role"]
 
-            del st.session_state["company"]
-            del st.session_state["role"]
-            del st.session_state["location"]
-            del st.session_state["job_link"]
-            del st.session_state["notes"]
+                if inferred_details["company"] or inferred_details["role"]:
+                    st.success(
+                        "RoleRadar filled what it could. Review the fields below, then click Add Application to save."
+                    )
 
-            st.rerun()
+                    for note in parser_notes:
+                        st.info(note)
+                else:
+                    st.info("RoleRadar could not confidently auto-fill this link yet. Add the details manually.")
+
+                    for note in parser_notes:
+                        st.info(note)
+
+        company = st.text_input("Company Name", key="company")
+        role = st.text_input("Job Title", key="role")
+        location = st.text_input("Location", key="location")
+
+        work_arrangement = st.selectbox(
+            "Work Arrangement",
+            ["Not Specified", "Remote", "Hybrid", "On-site"]
+        )
+
+        status = st.selectbox(
+            "Application Status",
+            ["Applied", "Interviewing", "Rejected", "Offer"]
+        )
+
+        notes = st.text_area("Notes", key="notes")
+
+        submit_button = st.button("Add Application")
+
+        if submit_button:
+            if company.strip() == "" or role.strip() == "":
+                st.error("Company name and job title are required.")
+            else:
+                new_application = {
+                    "Date Added": str(date.today()),
+                    "Company": company.strip(),
+                    "Role": role.strip(),
+                    "Location": location.strip(),
+                    "Work Arrangement": work_arrangement,
+                    "Status": status,
+                    "Job Link": job_link.strip(),
+                    "Notes": notes.strip()
+                }
+
+                df = pd.concat([df, pd.DataFrame([new_application])], ignore_index=True)
+                save_applications(df)
+
+                st.session_state["success_message"] = "Application saved successfully."
+                st.session_state["add_app_expanded"] = False
+
+                del st.session_state["company"]
+                del st.session_state["role"]
+                del st.session_state["location"]
+                del st.session_state["job_link"]
+                del st.session_state["notes"]
+
+                st.rerun()
 
     # -------------------------
     # DASHBOARD METRICS
@@ -238,58 +519,51 @@ if page == "Application Tracker":
     # FILTERS
     # -------------------------
 
-    st.header("Filters")
-
-    search_term = st.text_input("Search Company or Job Title")
-
-    status_filter = st.selectbox(
-        "Filter by Status",
-        ["All", "Applied", "Interviewing", "Rejected", "Offer"]
-    )
-
     filtered_df = df.copy()
 
-    if search_term:
-        filtered_df = filtered_df[
-            filtered_df["Company"].str.contains(search_term, case=False, na=False) |
-            filtered_df["Role"].str.contains(search_term, case=False, na=False)
-        ]
-
-    if status_filter != "All":
-        filtered_df = filtered_df[filtered_df["Status"] == status_filter]
-
     # -------------------------
-    # VISUAL ANALYTICS
-    # Charts showing application trends and distribution patterns.
+    # APPLICATION BREAKDOWN
+    # Compact summary tables replace oversized bar charts for a cleaner tracker experience.
     # -------------------------
 
-    st.subheader("Applications by Status")
-    status_counts = df["Status"].value_counts()
-    st.bar_chart(status_counts)
+    st.header("Application Breakdown")
 
-    if len(status_counts) > 0:
-        st.subheader("Application Distribution")
-        fig, ax = plt.subplots(figsize=(5, 5))
-        ax.pie(
-            status_counts,
-            labels=status_counts.index,
-            autopct="%1.1f%%",
-            startangle=90
+    breakdown_col1, breakdown_col2 = st.columns(2)
+
+    with breakdown_col1:
+        st.subheader("Status Breakdown")
+        status_counts = df["Status"].value_counts().reset_index()
+        status_counts.columns = ["Status", "Applications"]
+        st.table(status_counts.style.hide(axis="index"))
+
+        st.subheader("Work Arrangement")
+        work_arrangement_counts = (
+            df["Work Arrangement"]
+            .fillna("Not Specified")
+            .replace("", "Not Specified")
+            .value_counts()
+            .reset_index()
         )
-        ax.axis("equal")
-        st.pyplot(fig)
+        work_arrangement_counts.columns = ["Work Arrangement", "Applications"]
+        st.table(work_arrangement_counts.style.hide(axis="index"))
 
-    st.subheader("Top Companies Applied To")
-    company_counts = df["Company"].value_counts().head(5)
-    st.bar_chart(company_counts)
+    with breakdown_col2:
+        st.subheader("Most Applied Companies")
+        company_counts = df["Company"].value_counts().head(3).reset_index()
+        company_counts.columns = ["Company", "Applications"]
+        st.table(company_counts.style.hide(axis="index"))
 
-    st.subheader("Applications by Location")
-    location_counts = df["Location"].replace("", "Unknown").fillna("Unknown").value_counts()
-    st.bar_chart(location_counts)
-
-    st.subheader("Applications by Work Arrangement")
-    work_arrangement_counts = df["Work Arrangement"].fillna("Not Specified").value_counts()
-    st.bar_chart(work_arrangement_counts)
+        st.subheader("Most Applied Locations")
+        location_counts = (
+            df["Location"]
+            .replace("", "Unknown")
+            .fillna("Unknown")
+            .value_counts()
+            .head(3)
+            .reset_index()
+        )
+        location_counts.columns = ["Location", "Applications"]
+        st.table(location_counts.style.hide(axis="index"))
 
     # -------------------------
     # EXPORT DATA
@@ -301,7 +575,7 @@ if page == "Application Tracker":
     st.download_button(
         label="Download Applications CSV",
         data=csv_data,
-        file_name="jobsignal_applications.csv",
+        file_name="roleradar_applications.csv",
         mime="text/csv"
     )
 
@@ -314,74 +588,10 @@ if page == "Application Tracker":
 
     st.dataframe(
         recent_df,
-        width="stretch"
+        width="stretch",
+        hide_index=True
     )
 
-    # -------------------------
-    # SAVED APPLICATIONS + KEY INSIGHTS
-    # Displays filtered applications alongside analytics summaries.
-    # -------------------------
-
-    st.header("Saved Applications")
-    st.write(f"Showing {len(filtered_df)} applications.")
-
-    if len(filtered_df) > 0:
-        most_common_status = filtered_df["Status"].mode()[0]
-        top_company = filtered_df["Company"].mode()[0]
-
-        st.subheader("Key Insights")
-        st.info(
-            f"""
-            • Most common application status: {most_common_status}
-
-            • Company applied to most often: {top_company}
-
-            • Total shown applications: {len(filtered_df)}
-
-            • Average days since applying: {round(filtered_df['Days Since Applied'].mean(), 1)}
-            """
-        )
-        st.subheader("Application Analytics")
-
-        top_locations = (
-            df.groupby("Location")["Status"]
-            .apply(lambda x: (x == "Interviewing").sum())
-            .sort_values(ascending=False)
-        )
-
-        top_companies = (
-            df.groupby("Company")["Status"]
-            .apply(lambda x: (x == "Interviewing").sum())
-            .sort_values(ascending=False)
-        )
-
-        rejection_rate = round(
-            (len(df[df["Status"] == "Rejected"]) / len(df)) * 100,
-            1
-        ) if len(df) > 0 else 0
-
-        offer_rate = round(
-            (len(df[df["Status"] == "Offer"]) / len(df)) * 100,
-            1
-        ) if len(df) > 0 else 0
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.metric("Rejection Rate", f"{rejection_rate}%")
-
-        with col2:
-            st.metric("Offer Rate", f"{offer_rate}%")
-
-        st.subheader("Top Interview Locations")
-
-        st.bar_chart(top_locations)
-
-        st.subheader("Top Interview Companies")
-
-        st.bar_chart(top_companies)
-    else:
-        st.info("No applications match your current filters.")
 
     # =========================
     # AI FOLLOW-UP GENERATOR
@@ -467,38 +677,37 @@ if page == "Application Tracker":
     
 
     # =========================
-    # APPLICATION TIMELINE
-    # Visualizes application activity across dates.
+    # APPLICATION ACTIVITY
+    # Shows recent application activity by date.
+    # A table is clearer than a timeline chart while the dataset is still small.
     # =========================
 
-    st.header("Application Timeline")
+    st.header("Application Activity")
 
     timeline_df = df.copy()
 
     timeline_df["Date Added"] = pd.to_datetime(
         timeline_df["Date Added"]
-    )
+    ).dt.date
 
     applications_over_time = (
         timeline_df.groupby("Date Added")
         .size()
-        .reset_index(name="Applications")
+        .reset_index(name="Applications Added")
+        .sort_values(by="Date Added", ascending=False)
     )
 
-    applications_over_time = applications_over_time.sort_values(
-        by="Date Added"
-    )
-
-    st.line_chart(
-        applications_over_time.set_index("Date Added")
-    )
+    if len(applications_over_time) > 0:
+        st.table(applications_over_time.head(7).style.hide(axis="index"))
+    else:
+        st.info("No application activity tracked yet.")
 
     # =========================
-    # AI APPLICATION INSIGHTS
+    # APPLICATION STRATEGY INSIGHTS
     # Uses the recommendation engine to generate strategic application advice.
     # =========================
 
-    st.header("AI Application Insights")
+    st.header("Application Strategy Insights")
 
     rejection_rate = round(
         (len(df[df["Status"] == "Rejected"]) / total_applications) * 100,
@@ -515,7 +724,7 @@ if page == "Application Tracker":
     insight_col1.metric("Rejection Rate", f"{rejection_rate}%")
     insight_col2.metric("Offer Rate", f"{offer_rate}%")
 
-    st.subheader("AI Strategic Insights")
+    st.subheader("Strategic Insights")
 
     recommendations = generate_recommendations(df)
 
@@ -536,7 +745,35 @@ if page == "Application Tracker":
     # Inline editing tools for statuses, notes, and deletion.
     # -------------------------
 
-    st.subheader("Manage Applications")
+    st.header("Manage Applications")
+
+    st.subheader("Filter Applications")
+
+    search_term = st.text_input(
+        "Search Company or Job Title",
+        key="manage_search"
+    )
+
+    status_filter = st.selectbox(
+        "Filter by Status",
+        ["All", "Applied", "Interviewing", "Rejected", "Offer"],
+        key="manage_status_filter"
+    )
+
+    filtered_df = df.copy()
+
+    if search_term:
+        filtered_df = filtered_df[
+            filtered_df["Company"].str.contains(search_term, case=False, na=False) |
+            filtered_df["Role"].str.contains(search_term, case=False, na=False)
+        ]
+
+    if status_filter != "All":
+        filtered_df = filtered_df[filtered_df["Status"] == status_filter]
+
+    st.write(f"Showing {len(filtered_df)} matching applications.")
+
+    st.subheader("Application List")
 
     header1, header2, header3, header4, header5, header6, header7, header8 = st.columns([2, 2, 2, 2, 2, 3, 1, 1])
 
@@ -624,67 +861,379 @@ if page == "Application Tracker":
 
 # =========================
 # AI ANALYZER PAGE
-# Resume analysis, ATS scoring, and AI-powered optimization tools.
+# Resume analysis, job-fit scoring, and resume optimization tools.
 # =========================
 
-if page == "AI Analyzer":
+if page == "Radar Lab":
+
+    st.caption("Upload a resume, paste a job description, and let RoleRadar evaluate skill match, alignment, priority gaps, and improvement steps.")
 
     # -------------------------
-    # JOB DESCRIPTION ANALYZER
-    # Detects skills and recommends resume focus areas.
+    # RESUME MATCH SCORING
+    # Compares resume content against the target job description.
     # -------------------------
 
-    st.header("AI Job Description Analyzer")
+    st.header("Role Match Scanner")
 
-    job_description = st.text_area(
-        "Paste Job Description",
-        height=250
+    resume_text = ""
+    skills_section_found = False
+
+    uploaded_resume = st.file_uploader(
+    "Upload Resume PDF",
+    type=["pdf"]
     )
 
-    analyze_button = st.button("Analyze Job Description")
+    if uploaded_resume is not None:
 
-    if analyze_button:
-        detected_skills = extract_skills(job_description)
+        extracted_resume = extract_resume_text(
+            uploaded_resume
+        )
 
-        st.subheader("Detected Skills")
+        skills_section = extract_skills_section(
+            extracted_resume
+        )
 
-        if detected_skills:
-            for item in detected_skills:
-                st.write(
-                    f"• {item['display_skill']} ({item['category']})"
+        if skills_section.strip() != "":
+            resume_text = skills_section
+            skills_section_found = True
+            st.info("RoleRadar found and prioritized your resume skills section.")
+        else:
+            resume_text = extracted_resume
+            skills_section_found = False
+            st.warning(
+                "RoleRadar could not find a clear skills section, so it analyzed the full resume instead."
+            )
+
+        st.success("Resume uploaded successfully.")
+
+        with st.expander("Preview Extracted Resume Text"):
+
+            st.text_area(
+                "Full Extracted Resume Text",
+                extracted_resume,
+                height=300
+            )
+
+
+    match_job_description = st.text_area(
+        "Paste Job Description for Match Score",
+        height=200
+    )
+
+    match_button = st.button("Calculate Match Score")
+
+    saved_analysis = load_latest_analysis()
+
+    if match_button:
+        if resume_text.strip() == "":
+            st.error("Please upload a resume PDF before calculating a match score.")
+            st.stop()
+
+        if match_job_description.strip() == "":
+            st.error("Please paste a job description before calculating a match score.")
+            st.stop()
+
+        (
+            match_score,
+            matched_skills,
+            missing_skills,
+            critical_matched,
+            critical_missing
+        ) = calculate_match_score(
+            resume_text,
+            match_job_description
+        )
+        semantic_score = calculate_semantic_match(
+            resume_text,
+            match_job_description
+        )
+
+        role_type = classify_role_type(match_job_description)
+        critical_skills = ROLE_CRITICAL_SKILLS.get(role_type, [])
+
+        missing_critical_skills = []
+
+        for skill in critical_skills:
+            if skill.lower() not in [
+                s.lower() for s in matched_skills
+            ]:
+                missing_critical_skills.append(skill)
+
+        final_fit_score = calculate_final_fit_score(
+            match_score,
+            semantic_score
+        )
+        signal_strength = calculate_signal_strength(
+            matched_skills,
+            missing_skills,
+            skills_section_found,
+            semantic_score
+        )
+        smart_analysis = generate_gap_analysis(
+            matched_skills,
+            missing_skills,
+            semantic_score
+        )
+        fit_analysis = classify_job_fit(
+            match_score,
+            semantic_score,
+            matched_skills,
+            missing_skills
+        )
+        action_plan = generate_action_plan(
+            fit_analysis,
+            missing_skills,
+            semantic_score
+        )
+        latest_analysis = {
+            "match_score": match_score,
+            "semantic_score": semantic_score,
+            "role_type": role_type,
+            "final_fit_score": final_fit_score,
+            "signal_strength": signal_strength,
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills,
+            "smart_analysis": smart_analysis,
+            "fit_analysis": fit_analysis,
+            "action_plan": action_plan
+        }
+        save_latest_analysis(latest_analysis)
+        save_analysis_to_history(latest_analysis)
+
+        st.session_state["latest_match_results"] = {
+            "match_score": match_score,
+            "semantic_score": semantic_score,
+            "role_type": role_type,
+            "final_fit_score": final_fit_score,
+            "signal_strength": signal_strength,
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills,
+            "smart_analysis": smart_analysis,
+            "fit_analysis": fit_analysis,
+            "action_plan": action_plan
+        }
+
+        st.subheader("Match Results")
+
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        col1.metric("Skill Match", f"{match_score}%")
+        col2.metric("Resume Alignment", f"{semantic_score}%")
+        col3.metric("RadarScore", f"{final_fit_score}%")
+        col4.metric("Radar Strength", f"{signal_strength['score']}%")
+        col5.metric("Matched Skills", len(matched_skills))
+        col6.metric("Missing Skills", len(missing_skills))
+
+        st.info(f"Detected Role Type: {role_type}")
+        st.info(
+            f"Radar Strength: {signal_strength['label']} — {signal_strength['summary']}"
+        )
+
+        st.subheader("Priority Skill Analysis")
+
+        col6, col7 = st.columns(2)
+        col6.metric(
+            "Priority Skills Matched",
+            len(critical_matched)
+        )
+        col7.metric(
+            "Priority Skills Missing",
+            len(critical_missing)
+        )
+
+        st.subheader("Matched Skills")
+        if matched_skills:
+            for skill in matched_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No matching skills found.")
+
+        st.subheader("Missing Skills")
+        if missing_skills:
+            for skill in missing_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No missing skills detected.")
+
+        # =========================
+        # RESUME IMPROVEMENT SUGGESTIONS
+        # Generates realistic resume bullet ideas
+        # based on missing skills.
+        # =========================
+
+        st.subheader("Suggested Resume Bullets")
+
+        if missing_skills:
+            for skill in missing_skills:
+                suggested_bullet = generate_resume_bullet(skill)
+                st.success(
+                    f"{skill}: {suggested_bullet}"
                 )
         else:
-            st.write("No matching skills detected.")
+            st.write("No resume improvement suggestions needed right now.")
 
-        st.subheader("Skill Frequency Analysis")
+        # =========================
+        # PRIORITY SKILL GAPS
+        # Highlights the most important missing skills for the detected role.
+        # =========================
 
-        skill_frequency = calculate_skill_frequency(
-            detected_skills
+        st.subheader("Priority Skill Gaps")
+
+        if critical_missing:
+            for skill in critical_missing:
+                st.error(
+                    f"{skill}: This is a higher-priority gap for this type of role. "
+                    "Consider adding a project, bullet, or experience that demonstrates this skill."
+                )
+        else:
+            st.write("No priority skill gaps detected.")
+        
+        
+        st.subheader("Radar Insights")
+        for insight in smart_analysis:
+            st.info(insight)
+
+        st.subheader("Fit Summary")
+        st.info(f"Radar Status: {fit_analysis['label']}")
+        st.write(f"Summary: {fit_analysis['summary']}")
+        st.write(f"Effort Needed: {fit_analysis['effort_level']}")
+        st.write(f"Recommended Next Step: {fit_analysis['next_action']}")
+
+        
+        st.subheader("Resume Action Plan")
+
+        for item in action_plan:
+
+            st.markdown(f"### {item['title']}")
+
+            st.write("**Why This Matters**")
+            st.write(item["why_it_matters"])
+
+            st.write("**Suggested Improvement**")
+            st.write(item["suggested_project"])
+
+            st.write("**Skills You’ll Gain**")
+
+            for skill in item["skills_gained"]:
+                st.write(f"• {skill}")
+
+            st.write("**Resources**")
+
+            for resource in item["resources"]:
+                st.markdown(
+                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
+                )
+
+            st.write(f"**Difficulty:** {item['difficulty']}")
+            st.write(f"**Estimated Time:** {item['estimated_time']}")
+
+            st.divider()
+
+        st.subheader("Overall Recommendation")
+
+        if final_fit_score >= 80:
+            st.success("Strong alignment. This resume appears well matched to the role.")
+        elif final_fit_score >= 50:
+            st.warning("Moderate alignment. Strengthen the resume language before applying.")
+        else:
+            st.error("Needs more role evidence. This resume may need clearer role-specific skills before applying.")
+
+    elif saved_analysis:
+
+        match_score = saved_analysis["match_score"]
+        semantic_score = saved_analysis["semantic_score"]
+        final_fit_score = saved_analysis.get("final_fit_score", match_score)
+        signal_strength = saved_analysis.get(
+            "signal_strength",
+            {
+                "label": "Not Available",
+                "score": 0,
+                "summary": "Signal Strength was not saved for this older analysis."
+            }
         )
-        for skill, count in skill_frequency.items():
-            st.write(f"• {skill}: {count}")    
+        matched_skills = saved_analysis["matched_skills"]
+        missing_skills = saved_analysis["missing_skills"]
+        smart_analysis = saved_analysis["smart_analysis"]
+        fit_analysis = saved_analysis["fit_analysis"]
+        action_plan = saved_analysis["action_plan"]
 
-        st.subheader("AI Summary")
+        st.subheader("Latest Saved Match Results")
 
-        st.write(
-            "This role appears focused on analytical, technical, and communication skills. "
-            "Candidates should emphasize relevant technical projects, problem-solving ability, "
-            "and real-world experience."
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        col1.metric("Skill Match", f"{match_score}%")
+        col2.metric("Resume Alignment", f"{semantic_score}%")
+        col3.metric("RadarScore", f"{final_fit_score}%")
+        col4.metric("Radar Strength", f"{signal_strength['score']}%")
+        col5.metric("Matched Skills", len(matched_skills))
+        col6.metric("Missing Skills", len(missing_skills))
+
+        st.info(
+            f"Radar Strength: {signal_strength['label']} — {signal_strength['summary']}"
         )
 
-        st.subheader("Recommended Resume Focus")
+        st.subheader("Matched Skills")
 
-        resume_recommendations = generate_resume_recommendations(detected_skills)
+        if matched_skills:
+            for skill in matched_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No matching skills found.")
 
-        for recommendation in resume_recommendations:
-            st.write(f"• {recommendation}")
+        st.subheader("Missing Skills")
 
+        if missing_skills:
+            for skill in missing_skills:
+                st.write(f"• {skill}")
+        else:
+            st.write("No missing skills detected.")
+
+        st.subheader("Radar Insights")
+
+        for insight in smart_analysis:
+            st.info(insight)
+
+        st.subheader("Fit Summary")
+
+        st.info(f"Radar Status: {fit_analysis['label']}")
+        st.write(f"Summary: {fit_analysis['summary']}")
+        st.write(f"Effort Needed: {fit_analysis.get('effort_level', fit_analysis.get('tailoring_level', 'Not available'))}")
+        st.write(f"Recommended Next Step: {fit_analysis['next_action']}")
+
+
+        st.subheader("Resume Action Plan")
+
+        for item in action_plan:
+
+            st.markdown(f"### {item['title']}")
+
+            st.write("**Why This Matters**")
+            st.write(item["why_it_matters"])
+
+            st.write("**Suggested Improvement**")
+            st.write(item["suggested_project"])
+
+            st.write("**Skills You’ll Gain**")
+
+            for skill in item["skills_gained"]:
+                st.write(f"• {skill}")
+
+            st.write("**Resources**")
+
+            for resource in item["resources"]:
+                st.markdown(
+                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
+                )
+
+            st.write(f"**Difficulty:** {item['difficulty']}")
+            st.write(f"**Estimated Time:** {item['estimated_time']}")
+
+            st.divider()
     # -------------------------
     # ANALYSIS HISTORY VIEWER
     # Shows saved resume analysis history and score trends.
     # -------------------------
 
     st.header("Resume Analysis History")
+    st.caption("Review previous resume analyses, score trends, and repeated skill gaps.")
 
     analysis_history = load_analysis_history()
     skill_trends = analyze_skill_trends(
@@ -719,9 +1268,9 @@ if page == "AI Analyzer":
         col1, col2, col3, col4 = st.columns(4)
 
         col1.metric("Saved Analyses", total_analyses)
-        col2.metric("Latest Match Score", f"{latest_score}%")
-        col3.metric("Best Match Score", f"{best_score}%")
-        col4.metric("Average Match Score", f"{average_score}%")
+        col2.metric("Latest RadarScore", f"{latest_score}%")
+        col3.metric("Best RadarScore", f"{best_score}%")
+        col4.metric("Average RadarScore", f"{average_score}%")
 
         all_missing_skills = []
 
@@ -781,302 +1330,62 @@ if page == "AI Analyzer":
         st.info("No resume analyses saved yet.")
 
     # -------------------------
-    # RESUME MATCH SCORING
-    # Compares resume content against job description keywords.
+    # JOB DESCRIPTION ANALYZER
+    # Detects skills and recommends resume focus areas.
     # -------------------------
 
-    st.header("Resume Match Scoring")
+    st.header("Job Description Radar")
+    st.caption("Use this when you want to inspect a job description without running a full resume match.")
 
-    resume_text = st.text_area(
-        "Paste Resume or Skills",
-        height=200
+    job_description = st.text_area(
+        "Paste Job Description",
+        height=250
     )
 
-    match_job_description = st.text_area(
-        "Paste Job Description for Match Score",
-        height=200
-    )
+    analyze_button = st.button("Analyze Job Description")
 
-    match_button = st.button("Calculate Match Score")
+    if analyze_button:
+        detected_skills = extract_skills(job_description)
 
-    saved_analysis = load_latest_analysis()
+        st.subheader("Detected Skills")
 
-    if match_button:
-        (
-            match_score,
-            matched_skills,
-            missing_skills,
-            critical_matched,
-            critical_missing
-        ) = calculate_match_score(
-
-            resume_text,
-            match_job_description
-        )
-        semantic_score = calculate_semantic_match(
-            resume_text,
-            match_job_description
-        )
-
-        role_type = classify_role_type(match_job_description)
-        critical_skills = ROLE_CRITICAL_SKILLS.get(role_type, [])
-
-        missing_critical_skills = []
-
-        for skill in critical_skills:
-            if skill.lower() not in [
-                s.lower() for s in matched_skills
-            ]:
-                missing_critical_skills.append(skill)
-
-        final_fit_score = calculate_final_fit_score(
-            match_score,
-            semantic_score
-        )
-        smart_analysis = generate_gap_analysis(
-            matched_skills,
-            missing_skills,
-            semantic_score
-        )
-        fit_analysis = classify_job_fit(
-            match_score,
-            semantic_score,
-            matched_skills,
-            missing_skills
-        )
-        action_plan = generate_action_plan(
-            fit_analysis,
-            missing_skills,
-            semantic_score
-        )
-        latest_analysis = {
-            "match_score": match_score,
-            "semantic_score": semantic_score,
-            "role_type": role_type,
-            "final_fit_score": final_fit_score,
-            "matched_skills": matched_skills,
-            "missing_skills": missing_skills,
-            "smart_analysis": smart_analysis,
-            "fit_analysis": fit_analysis,
-            "action_plan": action_plan
-        }
-        save_latest_analysis(latest_analysis)
-        save_analysis_to_history(latest_analysis)
-
-        st.session_state["latest_match_results"] = {
-            "match_score": match_score,
-            "semantic_score": semantic_score,
-            "role_type": role_type,
-            "matched_skills": matched_skills,
-            "missing_skills": missing_skills,
-            "smart_analysis": smart_analysis,
-            "fit_analysis": fit_analysis,
-            "action_plan": action_plan
-        }
-
-        st.subheader("Match Results")
-
-        col1, col2, col3, col4, col5 = st.columns(5)
-        col1.metric("Skill Match", f"{match_score}%")
-        col2.metric("Resume Alignment", f"{semantic_score}%")
-        col3.metric("JobSignal Score", f"{final_fit_score}%")
-        col4.metric("Matched Skills", len(matched_skills))
-        col5.metric("Missing Skills", len(missing_skills))
-
-        st.info(f"Detected Role Type: {role_type}")
-
-        st.subheader("Critical Skill Analysis")
-
-        col6, col7 = st.columns(2)
-        col6.metric(
-            "Critical Skills Matched",
-        len(critical_matched)
-        )
-        col7.metric(
-            "Critical Skills Missing",
-            len(critical_missing)
-        )
-
-        st.subheader("Matched Skills")
-        if matched_skills:
-            for skill in matched_skills:
-                st.write(f"• {skill}")
-        else:
-            st.write("No matching skills found.")
-
-        st.subheader("Missing Skills")
-        if missing_skills:
-            for skill in missing_skills:
-                st.write(f"• {skill}")
-        else:
-            st.write("No missing skills detected.")
-
-        # =========================
-        # RESUME IMPROVEMENT SUGGESTIONS
-        # Generates realistic resume bullet ideas
-        # based on missing skills.
-        # =========================
-
-        st.subheader("Suggested Resume Bullets")
-
-        if missing_skills:
-            for skill in missing_skills:
-                suggested_bullet = generate_resume_bullet(skill)
-                st.success(
-                    f"{skill}: {suggested_bullet}"
+        if detected_skills:
+            for item in detected_skills:
+                st.write(
+                    f"• {item['display_skill']} ({item['category']})"
                 )
         else:
-            st.write("No resume improvement suggestions needed right now.")
+            st.write("No matching skills detected.")
 
-        # =========================
-        # PRIORITY SKILL GAPS
-        # Highlights the most important missing skills for the detected role.
-        # =========================
+        st.subheader("Skill Frequency Analysis")
 
-        st.subheader("Priority Skill Gaps")
+        skill_frequency = calculate_skill_frequency(
+            detected_skills
+        )
+        for skill, count in skill_frequency.items():
+            st.write(f"• {skill}: {count}")    
 
-        if critical_missing:
-            for skill in critical_missing:
-                st.error(
-                    f"{skill}: This is a higher-priority gap for this type of role. "
-                    "Consider adding a project, bullet, or experience that demonstrates this skill."
-                )
-        else:
-            st.write("No priority skill gaps detected.")
-        
-        
-        st.subheader("Smart Resume Gap Analysis")
-        for insight in smart_analysis:
-            st.info(insight)
+        st.subheader("AI Summary")
 
-        st.subheader("AI Fit Classification")
-        st.info(f"Fit Category: {fit_analysis['label']}")
-        st.write(f"Summary: {fit_analysis['summary']}")
-        st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
-        st.write(f"Recommended Action: {fit_analysis['next_action']}")
+        st.write(
+            "This role appears focused on analytical, technical, and communication skills. "
+            "Candidates should emphasize relevant technical projects, problem-solving ability, "
+            "and real-world experience."
+        )
 
-        
-        st.subheader("Resume Action Plan")
+        st.subheader("Recommended Resume Focus")
 
-        for item in action_plan:
+        resume_recommendations = generate_resume_recommendations(detected_skills)
 
-            st.markdown(f"### {item['title']}")
+        for recommendation in resume_recommendations:
+            st.write(f"• {recommendation}")
 
-            st.write("**Why This Matters**")
-            st.write(item["why_it_matters"])
-
-            st.write("**Suggested Improvement**")
-            st.write(item["suggested_project"])
-
-            st.write("**Skills You’ll Gain**")
-
-            for skill in item["skills_gained"]:
-                st.write(f"• {skill}")
-
-            st.write("**Resources**")
-
-            for resource in item["resources"]:
-                st.markdown(
-                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
-                )
-
-            st.write(f"**Difficulty:** {item['difficulty']}")
-            st.write(f"**Estimated Time:** {item['estimated_time']}")
-
-            st.divider()
-
-        st.subheader("Recommendation")
-
-        if final_fit_score >= 80:
-            st.success("Strong fit. This resume appears well aligned with the role.")
-        elif final_fit_score >= 50:
-            st.warning("Moderate fit. Tailor your resume before applying.")
-        else:
-            st.error("Weak fit. This resume needs stronger alignment before applying.")
-
-    elif saved_analysis:
-
-        match_score = saved_analysis["match_score"]
-        semantic_score = saved_analysis["semantic_score"]
-        final_fit_score = saved_analysis.get("final_fit_score", match_score)
-        matched_skills = saved_analysis["matched_skills"]
-        missing_skills = saved_analysis["missing_skills"]
-        smart_analysis = saved_analysis["smart_analysis"]
-        fit_analysis = saved_analysis["fit_analysis"]
-        action_plan = saved_analysis["action_plan"]
-
-        st.subheader("Latest Saved Match Results")
-
-        col1, col2, col3, col4, col5 = st.columns(5)
-        col1.metric("Skill Match", f"{match_score}%")
-        col2.metric("Resume Alignment", f"{semantic_score}%")
-        col3.metric("JobSignal Score", f"{final_fit_score}%")
-        col4.metric("Matched Skills", len(matched_skills))
-        col5.metric("Missing Skills", len(missing_skills))
-
-        st.subheader("Matched Skills")
-
-        if matched_skills:
-            for skill in matched_skills:
-                st.write(f"• {skill}")
-        else:
-            st.write("No matching skills found.")
-
-        st.subheader("Missing Skills")
-
-        if missing_skills:
-            for skill in missing_skills:
-                st.write(f"• {skill}")
-        else:
-            st.write("No missing skills detected.")
-
-        st.subheader("Smart Resume Gap Analysis")
-
-        for insight in smart_analysis:
-            st.info(insight)
-
-        st.subheader("AI Fit Classification")
-
-        st.info(f"Fit Category: {fit_analysis['label']}")
-        st.write(f"Summary: {fit_analysis['summary']}")
-        st.write(f"Tailoring Needed: {fit_analysis['tailoring_level']}")
-        st.write(f"Recommended Action: {fit_analysis['next_action']}")
-
-
-        st.subheader("Resume Action Plan")
-
-        for item in action_plan:
-
-            st.markdown(f"### {item['title']}")
-
-            st.write("**Why This Matters**")
-            st.write(item["why_it_matters"])
-
-            st.write("**Suggested Improvement**")
-            st.write(item["suggested_project"])
-
-            st.write("**Skills You’ll Gain**")
-
-            for skill in item["skills_gained"]:
-                st.write(f"• {skill}")
-
-            st.write("**Resources**")
-
-            for resource in item["resources"]:
-                st.markdown(
-                    f"- [{resource['title']}]({resource['url']}) ({resource['type']})"
-                )
-
-            st.write(f"**Difficulty:** {item['difficulty']}")
-            st.write(f"**Estimated Time:** {item['estimated_time']}")
-
-            st.divider()
     # -------------------------
-    # RESUME BULLET ENHANCER
-    # Strengthens weak resume bullets and improves ATS alignment.
+    # RESUME BULLET REWRITER
+    # Strengthens resume bullets and improves role alignment.
     # -------------------------
 
-    st.header("AI Resume Bullet Enhancer")
+    st.header("Rewrite a Resume Bullet")
 
     original_bullet = st.text_area(
         "Paste Resume Bullet",
@@ -1105,7 +1414,7 @@ if page == "AI Analyzer":
         else:
             st.write("No major keywords detected.")
 
-        st.subheader("ATS Optimization Feedback")
+        st.subheader("Resume Bullet Feedback")
 
         bullet_length = len(improved_bullet.split())
 
@@ -1117,4 +1426,4 @@ if page == "AI Analyzer":
             st.success("Bullet length looks strong for ATS readability.")
 
         if "%" not in improved_bullet and "increase" not in improved_bullet.lower():
-            st.info("Consider adding measurable metrics or impact.")
+            st.info("Consider adding measurable results, scope, or impact.")
