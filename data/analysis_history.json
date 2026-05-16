@@ -1130,5 +1130,502 @@
                 }
             ]
         }
+    },
+    {
+        "timestamp": "2026-05-16 16:45:04",
+        "analysis": {
+            "match_score": 54.8,
+            "semantic_score": 10.2,
+            "role_type": "Data Analyst",
+            "final_fit_score": 37.0,
+            "signal_strength": {
+                "label": "High",
+                "score": 90,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "SQL",
+                "Data Analysis",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "Power BI",
+                "Dashboarding",
+                "Reporting",
+                "Business Intelligence",
+                "Communication",
+                "Stakeholder Management",
+                "Problem Solving"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume shows relevant technical experience for this role.",
+                "This role appears to value communication. Consider adding experience with teamwork, presentations, documentation, or stakeholder collaboration.",
+                "Your resume may need stronger alignment with the role before applying."
+            ],
+            "fit_analysis": {
+                "label": "Some Match, Needs Focus",
+                "summary": "Your background connects with parts of this role, but the resume still feels too general for this specific position.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Focus your strongest experiences around the responsibilities and skills emphasized in the posting."
+            },
+            "action_plan": [
+                {
+                    "title": "Improve Resume Wording Alignment",
+                    "why_it_matters": "Your resume includes some relevant skills, but the wording does not closely match the job description. Applicant tracking systems and recruiters often look for language that clearly reflects the role's responsibilities.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using phrases from the job description while keeping the bullets honest and based on real experience.",
+                    "skills_gained": [
+                        "Resume tailoring",
+                        "ATS optimization",
+                        "Professional writing"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                },
+                {
+                    "title": "Add Communication Evidence",
+                    "why_it_matters": "This role emphasizes communication, collaboration, or stakeholder interaction. A technical resume can look incomplete if it only lists tools without showing how you explained results or worked with others.",
+                    "suggested_project": "Add a bullet showing a time you explained data, documented a process, presented findings, worked with a team, or supported a non-technical audience.",
+                    "skills_gained": [
+                        "Professional communication",
+                        "Stakeholder collaboration",
+                        "Documentation"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Google Technical Writing Course",
+                            "type": "course",
+                            "url": "https://developers.google.com/tech-writing"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 minutes"
+                }
+            ]
+        }
+    },
+    {
+        "timestamp": "2026-05-16 16:54:42",
+        "analysis": {
+            "match_score": 54.8,
+            "semantic_score": 10.2,
+            "role_type": "Data Analyst",
+            "final_fit_score": 37.0,
+            "signal_strength": {
+                "label": "High",
+                "score": 90,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "SQL",
+                "Data Analysis",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "Power BI",
+                "Dashboarding",
+                "Reporting",
+                "Business Intelligence",
+                "Communication",
+                "Stakeholder Management",
+                "Problem Solving"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume shows relevant technical experience for this role.",
+                "This role appears to value communication. Consider adding experience with teamwork, presentations, documentation, or stakeholder collaboration.",
+                "Your resume may need stronger alignment with the role before applying."
+            ],
+            "fit_analysis": {
+                "label": "Some Match, Needs Focus",
+                "summary": "Your background connects with parts of this role, but the resume still feels too general for this specific position.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Focus your strongest experiences around the responsibilities and skills emphasized in the posting."
+            },
+            "action_plan": [
+                {
+                    "title": "Improve Resume Wording Alignment",
+                    "why_it_matters": "Your resume includes some relevant skills, but the wording does not closely match the job description. Applicant tracking systems and recruiters often look for language that clearly reflects the role's responsibilities.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using phrases from the job description while keeping the bullets honest and based on real experience.",
+                    "skills_gained": [
+                        "Resume tailoring",
+                        "ATS optimization",
+                        "Professional writing"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                },
+                {
+                    "title": "Add Communication Evidence",
+                    "why_it_matters": "This role emphasizes communication, collaboration, or stakeholder interaction. A technical resume can look incomplete if it only lists tools without showing how you explained results or worked with others.",
+                    "suggested_project": "Add a bullet showing a time you explained data, documented a process, presented findings, worked with a team, or supported a non-technical audience.",
+                    "skills_gained": [
+                        "Professional communication",
+                        "Stakeholder collaboration",
+                        "Documentation"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Google Technical Writing Course",
+                            "type": "course",
+                            "url": "https://developers.google.com/tech-writing"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 minutes"
+                }
+            ]
+        }
+    },
+    {
+        "timestamp": "2026-05-16 17:09:12",
+        "analysis": {
+            "match_score": 77.8,
+            "semantic_score": 1.6,
+            "role_type": "Data Analyst",
+            "final_fit_score": 47.3,
+            "signal_strength": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "Business Intelligence",
+                "Communication"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "This role appears to value communication. Consider adding experience with teamwork, presentations, documentation, or stakeholder collaboration.",
+                "Your resume covers more required skills than it misses, which is a positive signal."
+            ],
+            "fit_analysis": {
+                "label": "Strong Skills, Needs Clearer Wording",
+                "summary": "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
+            },
+            "action_plan": [
+                {
+                    "title": "Improve Resume Wording Alignment",
+                    "why_it_matters": "Your resume includes some relevant skills, but the wording does not closely match the job description. Applicant tracking systems and recruiters often look for language that clearly reflects the role's responsibilities.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using phrases from the job description while keeping the bullets honest and based on real experience.",
+                    "skills_gained": [
+                        "Resume tailoring",
+                        "ATS optimization",
+                        "Professional writing"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                },
+                {
+                    "title": "Add Communication Evidence",
+                    "why_it_matters": "This role emphasizes communication, collaboration, or stakeholder interaction. A technical resume can look incomplete if it only lists tools without showing how you explained results or worked with others.",
+                    "suggested_project": "Add a bullet showing a time you explained data, documented a process, presented findings, worked with a team, or supported a non-technical audience.",
+                    "skills_gained": [
+                        "Professional communication",
+                        "Stakeholder collaboration",
+                        "Documentation"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Google Technical Writing Course",
+                            "type": "course",
+                            "url": "https://developers.google.com/tech-writing"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You already have strong skills in Excel and AI, which show your analytical strength and comfort with data tools\u2014this is a solid foundation for the role.\n- Missing familiarity with business intelligence tools like PowerBI might limit your ability to create interactive reports and dashboards, which are key for this job.\n- Communication skills are crucial here for teamwork, presenting findings clearly, and collaborating in a fast-paced setting.\n- To improve, try learning PowerBI through free online tutorials or student projects and practice writing reports or giving presentations to build confidence.\n- Joining clubs or internships where you communicate data insights can also help bridge these gaps before applying.",
+                "error": ""
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-16 17:34:31",
+        "analysis": {
+            "match_score": 41.2,
+            "semantic_score": 1.6,
+            "role_type": "Data Analyst",
+            "final_fit_score": 25.4,
+            "signal_strength": {
+                "label": "Moderate",
+                "score": 75,
+                "summary": "RoleRadar found useful resume evidence, but the analysis may improve with clearer skill wording or stronger role-specific details."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "Power BI",
+                "Business Intelligence",
+                "Communication",
+                "Collaboration",
+                "Presentations",
+                "Attention to Detail",
+                "Organization"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "This role appears to value communication. Consider adding experience with teamwork, presentations, documentation, or stakeholder collaboration.",
+                "Your resume may need stronger alignment with the role before applying."
+            ],
+            "fit_analysis": {
+                "label": "Needs More Role Evidence",
+                "summary": "Right now, the resume does not show enough clear evidence for what this role is asking for.",
+                "effort_level": "Major Updates",
+                "next_action": "This may be a stretch role for now. Strengthen the resume with more relevant skills, projects, or experience before relying on it for this kind of application."
+            },
+            "action_plan": [
+                {
+                    "title": "Improve Resume Wording Alignment",
+                    "why_it_matters": "Your resume includes some relevant skills, but the wording does not closely match the job description. Applicant tracking systems and recruiters often look for language that clearly reflects the role's responsibilities.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using phrases from the job description while keeping the bullets honest and based on real experience.",
+                    "skills_gained": [
+                        "Resume tailoring",
+                        "ATS optimization",
+                        "Professional writing"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                },
+                {
+                    "title": "Add Communication Evidence",
+                    "why_it_matters": "This role emphasizes communication, collaboration, or stakeholder interaction. A technical resume can look incomplete if it only lists tools without showing how you explained results or worked with others.",
+                    "suggested_project": "Add a bullet showing a time you explained data, documented a process, presented findings, worked with a team, or supported a non-technical audience.",
+                    "skills_gained": [
+                        "Professional communication",
+                        "Stakeholder collaboration",
+                        "Documentation"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Google Technical Writing Course",
+                            "type": "course",
+                            "url": "https://developers.google.com/tech-writing"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have strong data skills with R and Excel, which is a great foundation for the analytical aspects of this role. However, familiarity with Power BI and other business intelligence tools is missing and important for creating interactive dashboards and reports.\n- Communication and collaboration skills are key because the job requires working in teams and presenting insights clearly to various stakeholders; these areas could be strengthened through group projects or presentation practice.\n- Attention to detail and organization matter because this role involves managing multiple tasks and ensuring accurate data interpretation; improving these through time management techniques or checklist use will help.\n- To improve, engage in activities like student clubs, internships, or online courses focused on business intelligence tools and soft skills like communication and teamwork.\n- Gaining experience with PowerPoint and practicing verbal presentations can also boost your readiness for the travel and client-facing aspects of the job.",
+                "error": ""
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-16 17:45:53",
+        "analysis": {
+            "match_score": 41.2,
+            "semantic_score": 1.6,
+            "role_type": "Data Analyst",
+            "final_fit_score": 25.4,
+            "signal_strength": {
+                "label": "Moderate",
+                "score": 75,
+                "summary": "RoleRadar found useful resume evidence, but the analysis may improve with clearer skill wording or stronger role-specific details."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "Power BI",
+                "Business Intelligence",
+                "Communication",
+                "Collaboration",
+                "Presentations",
+                "Attention to Detail",
+                "Organization"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "This role appears to value communication. Consider adding experience with teamwork, presentations, documentation, or stakeholder collaboration.",
+                "Your resume may need stronger alignment with the role before applying."
+            ],
+            "fit_analysis": {
+                "label": "Needs More Role Evidence",
+                "summary": "Right now, the resume does not show enough clear evidence for what this role is asking for.",
+                "effort_level": "Major Updates",
+                "next_action": "This may be a stretch role for now. Strengthen the resume with more relevant skills, projects, or experience before relying on it for this kind of application."
+            },
+            "action_plan": [
+                {
+                    "title": "Make Your Resume Match the Role Better",
+                    "why_it_matters": "Your resume may include relevant experience, but the wording does not clearly mirror the job description yet. Recruiters and screening tools need to quickly see how your background connects to the role.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using language from the job description while keeping the experience truthful. Focus on tools used, outcomes, responsibilities, and who benefited from the work.",
+                    "skills_gained": [
+                        "Resume writing",
+                        "Role alignment",
+                        "Professional positioning"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        },
+                        {
+                            "title": "YouTube: Resume Bullet Writing for Internships",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=resume+bullet+writing+for+internships"
+                        },
+                        {
+                            "title": "TikTok: Resume Bullet Examples",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=resume%20bullet%20examples%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                },
+                {
+                    "title": "Show Communication and Stakeholder Evidence",
+                    "why_it_matters": "This role values communication, collaboration, or stakeholder work. A technical resume is stronger when it shows that you can explain findings, document work, and support people who are not technical.",
+                    "suggested_project": "Add or rewrite one bullet showing how you presented findings, documented a process, worked with a team, or explained data to someone else.",
+                    "skills_gained": [
+                        "Professional communication",
+                        "Stakeholder collaboration",
+                        "Documentation",
+                        "Presentations"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Google Technical Writing Course",
+                            "type": "course",
+                            "url": "https://developers.google.com/tech-writing"
+                        },
+                        {
+                            "title": "YouTube: How to Present Data Insights",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=how+to+present+data+insights+to+stakeholders"
+                        },
+                        {
+                            "title": "TikTok: Presentation Tips for Students",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=presentation%20tips%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 45 minutes"
+                },
+                {
+                    "title": "Build a Dashboard Project",
+                    "why_it_matters": "Dashboarding and business intelligence skills are important for analytics roles because they show that you can turn data into something useful for decision-making.",
+                    "suggested_project": "Create a dashboard using a public dataset. Track 4 to 6 key metrics, add filters, and write a short README explaining the business question and insights.",
+                    "skills_gained": [
+                        "Dashboarding",
+                        "Business intelligence",
+                        "Data visualization",
+                        "KPI reporting"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Microsoft Learn: Power BI Learning Path",
+                            "type": "course",
+                            "url": "https://learn.microsoft.com/en-us/training/powerplatform/power-bi"
+                        },
+                        {
+                            "title": "Tableau Free Training Videos",
+                            "type": "course",
+                            "url": "https://www.tableau.com/learn/training"
+                        },
+                        {
+                            "title": "YouTube: Power BI Dashboard Project for Beginners",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=power+bi+dashboard+project+for+beginners"
+                        },
+                        {
+                            "title": "YouTube: Tableau Dashboard Project for Beginners",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=tableau+dashboard+project+for+beginners"
+                        },
+                        {
+                            "title": "TikTok: Power BI Dashboard Tips",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=power%20bi%20dashboard%20tips"
+                        }
+                    ],
+                    "difficulty": "Beginner to Intermediate",
+                    "estimated_time": "1 weekend"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have strong technical skills in R, Excel, and AI, which align well with data analysis and advanced analytics aspects of the role.\n- The gap in Power BI and business intelligence tools is important because these are key for creating dashboards and visual reports that the job requires.\n- Communication, collaboration, presentations, and organizational skills matter for effectively sharing insights and working in team settings.\n- To improve, focus on learning Power BI (many free tutorials exist) and practice soft skills through group projects, presentations, or campus activities.\n- Highlight any experience managing tasks or working in teams to show your growing organizational and interpersonal abilities.",
+                "error": ""
+            }
+        }
     }
 ]

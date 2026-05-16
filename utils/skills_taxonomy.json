@@ -1,63 +1,267 @@
 {
-  "Programming": [
-    "python",
-    "r",
-    "sql",
-    "javascript",
-    "typescript",
-    "java",
-    "c++",
-    "html",
-    "css"
-  ],
-  "Data Analysis": [
-    "data analysis",
-    "data analytics",
-    "excel",
-    "pandas",
-    "numpy",
-    "data cleaning",
-    "data preprocessing",
-    "exploratory data analysis",
-    "eda",
-    "statistical analysis",
-    "statistics"
-  ],
+  "Programming": {
+    "python": [
+      "python",
+      "python programming",
+      "python scripting",
+      "python development"
+    ],
+    "r": [
+      "r",
+      "r programming",
+      "rstudio",
+      "r studio"
+    ],
+    "sql": [
+      "sql",
+      "structured query language",
+      "sql queries",
+      "query writing",
+      "database queries"
+    ],
+    "javascript": [
+      "javascript",
+      "js"
+    ],
+    "typescript": [
+      "typescript",
+      "ts"
+    ],
+    "java": [
+      "java"
+    ],
+    "c++": [
+      "c++",
+      "cpp"
+    ],
+    "c#": [
+      "c#",
+      "c sharp"
+    ],
+    "html": [
+      "html",
+      "html5"
+    ],
+    "css": [
+      "css",
+      "css3"
+    ],
+    "bash": [
+      "bash",
+      "shell scripting",
+      "command line scripting"
+    ],
+    "git": [
+      "git",
+      "github",
+      "version control",
+      "source control"
+    ],
+    "streamlit": [
+      "streamlit",
+      "streamlit app",
+      "streamlit dashboard"
+    ],
+    "software development": [
+      "software development",
+      "application development",
+      "app development",
+      "software engineering"
+    ],
+    "debugging": [
+      "debugging",
+      "troubleshooting",
+      "bug fixing",
+      "error handling"
+    ]
+  },
+
+  "Data Analysis": {
+    "data analysis": [
+      "data analysis",
+      "data analytics",
+      "analyze data",
+      "analyzing data",
+      "data-driven analysis",
+      "analytical work"
+    ],
+    "excel": [
+      "excel",
+      "microsoft excel",
+      "spreadsheets",
+      "spreadsheet analysis",
+      "pivot tables",
+      "vlookup",
+      "xlookup",
+      "excel formulas",
+      "conditional formatting"
+    ],
+    "pandas": [
+      "pandas",
+      "python pandas"
+    ],
+    "numpy": [
+      "numpy",
+      "python numpy"
+    ],
+    "data cleaning": [
+      "data cleaning",
+      "clean data",
+      "data cleansing",
+      "cleaning datasets",
+      "data quality checks"
+    ],
+    "data preprocessing": [
+      "data preprocessing",
+      "preprocessing",
+      "data preparation",
+      "data wrangling",
+      "data transformation"
+    ],
+    "exploratory data analysis": [
+      "exploratory data analysis",
+      "eda",
+      "explore datasets",
+      "exploratory analysis"
+    ],
+    "statistical analysis": [
+      "statistical analysis",
+      "statistics",
+      "statistical methods",
+      "statistical modeling",
+      "descriptive statistics",
+      "inferential statistics"
+    ],
+    "forecasting": [
+      "forecasting",
+      "forecast models",
+      "time series",
+      "trend forecasting",
+      "predict trends"
+    ],
+    "data validation": [
+      "data validation",
+      "validate data",
+      "quality assurance",
+      "qa checks",
+      "data accuracy"
+    ],
+    "data interpretation": [
+      "data interpretation",
+      "interpret data",
+      "interpret findings",
+      "draw insights",
+      "insight generation"
+    ],
+    "a/b testing": [
+      "a/b testing",
+      "ab testing",
+      "experimentation",
+      "experiment analysis"
+    ],
+    "data collection": [
+      "data collection",
+      "collect data",
+      "data gathering",
+      "survey data",
+      "research data"
+    ],
+    "data entry": [
+      "data entry",
+      "enter data",
+      "data input",
+      "records entry"
+    ]
+  },
+
   "Business Intelligence": {
     "tableau": [
-      "tableau"
+      "tableau",
+      "tableau dashboards",
+      "tableau desktop"
     ],
     "power bi": [
       "power bi",
-      "microsoft power bi"
+      "microsoft power bi",
+      "powerbi",
+      "power bi dashboards",
+      "power query",
+      "dax"
     ],
-    "dashboard": [
+    "dashboarding": [
       "dashboard",
       "dashboards",
+      "dashboarding",
       "reporting dashboard",
-      "bi dashboard"
+      "bi dashboard",
+      "interactive dashboard",
+      "executive dashboard"
     ],
     "reporting": [
       "reporting",
       "reports",
-      "report generation"
+      "report generation",
+      "weekly reports",
+      "monthly reports",
+      "status reports",
+      "executive reporting"
     ],
     "metrics": [
       "metrics",
+      "metric tracking",
       "kpi",
       "kpis",
+      "key performance indicators",
       "performance metrics"
     ],
     "business intelligence": [
       "business intelligence",
-      "bi"
+      "bi",
+      "business insights",
+      "business analytics"
     ],
     "data visualization": [
       "data visualization",
       "visualization",
-      "data visualizations"
+      "data visualizations",
+      "charts",
+      "graphs",
+      "visual analytics",
+      "matplotlib",
+      "plotly",
+      "seaborn"
+    ],
+    "business performance": [
+      "business performance",
+      "performance analysis",
+      "performance tracking",
+      "business performance analysis"
+    ],
+    "sales analytics": [
+      "sales analytics",
+      "sales analysis",
+      "sales reporting",
+      "pipeline analytics",
+      "revenue analysis"
+    ],
+    "financial analysis": [
+      "financial analysis",
+      "financial analytics",
+      "budget analysis",
+      "variance analysis",
+      "fp&a",
+      "financial planning and analysis"
+    ],
+    "crm analytics": [
+      "crm analytics",
+      "clienteling",
+      "customer analytics",
+      "customer insights",
+      "customer data",
+      "salesforce reporting"
     ]
   },
+
   "Databases": {
     "mysql": [
       "mysql"
@@ -69,74 +273,135 @@
     "sql server": [
       "sql server",
       "microsoft sql server",
-      "ms sql server"
+      "ms sql server",
+      "t-sql",
+      "tsql"
     ],
     "sqlite": [
       "sqlite"
     ],
+    "mongodb": [
+      "mongodb",
+      "mongo db",
+      "nosql"
+    ],
     "database": [
       "database",
-      "databases"
+      "databases",
+      "database management",
+      "data storage"
     ],
     "data warehouse": [
       "data warehouse",
-      "data warehousing"
+      "data warehousing",
+      "warehouse data"
     ],
     "etl": [
       "etl",
-      "extract transform load"
+      "elt",
+      "extract transform load",
+      "extract load transform"
     ],
     "data pipeline": [
       "data pipeline",
-      "data pipelines"
+      "data pipelines",
+      "pipeline development",
+      "data ingestion"
+    ],
+    "data modeling": [
+      "data modeling",
+      "data models",
+      "schema design",
+      "relational models"
+    ],
+    "data governance": [
+      "data governance",
+      "data standards",
+      "data stewardship",
+      "data policies"
     ]
   },
 
   "AI and Machine Learning": {
     "ai": [
       "ai",
-      "artificial intelligence"
+      "artificial intelligence",
+      "ai tools",
+      "ai systems",
+      "ai-powered"
     ],
     "machine learning": [
       "machine learning",
-      "ml"
+      "ml",
+      "ml models",
+      "machine learning models"
     ],
     "nlp": [
       "nlp",
-      "natural language processing"
+      "natural language processing",
+      "text analysis",
+      "language processing"
     ],
     "llm": [
       "llm",
       "large language model",
-      "large language models"
+      "large language models",
+      "generative ai",
+      "genai",
+      "prompt engineering"
     ],
     "chatbot": [
       "chatbot",
       "chatbots",
-      "conversational ai"
+      "conversational ai",
+      "virtual assistant"
     ],
     "predictive modeling": [
       "predictive modeling",
-      "predictive models"
+      "predictive models",
+      "prediction models",
+      "predictive analytics"
     ],
     "classification": [
       "classification",
-      "classification models"
+      "classification models",
+      "classifiers"
     ],
     "regression": [
       "regression",
-      "regression analysis"
+      "regression analysis",
+      "linear regression",
+      "logistic regression"
+    ],
+    "model evaluation": [
+      "model evaluation",
+      "model validation",
+      "accuracy",
+      "precision",
+      "recall",
+      "f1 score"
+    ],
+    "computer vision": [
+      "computer vision",
+      "image recognition",
+      "image classification"
+    ],
+    "data mining": [
+      "data mining",
+      "pattern recognition",
+      "pattern detection"
     ]
   },
 
-  "Cloud": {
+  "Cloud and Infrastructure": {
     "aws": [
       "aws",
       "amazon web services"
     ],
     "azure": [
       "azure",
-      "microsoft azure"
+      "microsoft azure",
+      "azure cloud"
     ],
     "gcp": [
       "gcp",
@@ -149,113 +414,362 @@
     ],
     "lambda": [
       "lambda",
-      "aws lambda"
+      "aws lambda",
+      "serverless"
     ],
     "ec2": [
       "ec2",
-      "amazon ec2"
+      "amazon ec2",
+      "virtual machine"
     ],
     "cloud": [
       "cloud",
-      "cloud computing"
+      "cloud computing",
+      "cloud platforms"
     ],
     "cloud deployment": [
       "cloud deployment",
-      "cloud deployments"
+      "cloud deployments",
+      "deploy applications",
+      "deployment"
+    ],
+    "docker": [
+      "docker",
+      "containers",
+      "containerization"
+    ],
+    "linux": [
+      "linux",
+      "unix",
+      "terminal",
+      "command line"
+    ],
+    "api integration": [
+      "api integration",
+      "integrate apis",
+      "third-party apis",
+      "external apis"
     ]
   },
 
-  "Automation": {
+  "Automation and Operations": {
     "automation": [
       "automation",
-      "automated workflows"
+      "automated workflows",
+      "automate tasks",
+      "task automation"
     ],
     "workflow automation": [
       "workflow automation",
-      "workflow automations"
+      "workflow automations",
+      "workflow improvement",
+      "workflow optimization"
     ],
     "scripting": [
       "scripting",
-      "scripts"
+      "scripts",
+      "script development"
     ],
     "process improvement": [
       "process improvement",
-      "process optimization"
+      "process optimization",
+      "operational improvement",
+      "efficiency improvement"
     ],
     "web scraping": [
       "web scraping",
-      "scraping"
+      "scraping",
+      "web data extraction",
+      "automated scraping"
     ],
     "api": [
       "api",
       "apis",
-      "rest api"
+      "rest api",
+      "restful api",
+      "api calls"
     ],
     "data automation": [
       "data automation",
-      "automated data processing"
+      "automated data processing",
+      "automated reporting",
+      "automated analysis"
+    ],
+    "quality assurance": [
+      "quality assurance",
+      "qa",
+      "testing",
+      "test cases",
+      "validation checks"
+    ],
+    "documentation workflows": [
+      "documentation workflows",
+      "process documentation",
+      "workflow documentation",
+      "standard operating procedures",
+      "sops"
+    ]
+  },
+
+  "Business and Product": {
+    "product management": [
+      "product management",
+      "product manager",
+      "product development",
+      "product strategy"
+    ],
+    "project management": [
+      "project management",
+      "project coordination",
+      "project planning",
+      "project tracking"
+    ],
+    "requirements gathering": [
+      "requirements gathering",
+      "gather requirements",
+      "business requirements",
+      "user requirements"
+    ],
+    "business analysis": [
+      "business analysis",
+      "business analyst",
+      "business process analysis",
+      "process analysis"
+    ],
+    "market research": [
+      "market research",
+      "competitive research",
+      "industry research",
+      "customer research"
+    ],
+    "operations": [
+      "operations",
+      "business operations",
+      "operational support",
+      "operations analysis"
+    ],
+    "strategy": [
+      "strategy",
+      "strategic analysis",
+      "business strategy",
+      "commercial strategy"
+    ],
+    "crm": [
+      "crm",
+      "customer relationship management",
+      "salesforce",
+      "hubspot"
     ]
   },
 
   "Professional Skills": {
     "communication": [
       "communication",
-      "communications"
+      "communications",
+      "written communication",
+      "verbal communication",
+      "interpersonal communication",
+      "excellent communication",
+      "clear communication"
     ],
     "leadership": [
       "leadership",
-      "team leadership"
+      "team leadership",
+      "lead initiatives",
+      "led a team"
     ],
     "collaboration": [
       "collaboration",
-      "cross functional collaboration"
+      "collaborate",
+      "collaborative",
+      "teamwork",
+      "team-oriented",
+      "cross functional collaboration",
+      "cross-functional collaboration",
+      "cross-functional teams"
     ],
-    "stakeholder": [
+    "stakeholder management": [
       "stakeholder",
       "stakeholders",
-      "stakeholder management"
+      "stakeholder management",
+      "stakeholder communication",
+      "stakeholder engagement",
+      "client communication"
     ],
     "presentation": [
       "presentation",
       "presentations",
-      "presenting"
+      "presenting",
+      "present findings",
+      "present insights",
+      "powerpoint",
+      "microsoft powerpoint",
+      "slide decks"
     ],
     "documentation": [
       "documentation",
-      "technical documentation"
+      "technical documentation",
+      "document processes",
+      "documented workflows",
+      "written documentation"
     ],
     "technical writing": [
       "technical writing",
-      "technical writer"
+      "technical writer",
+      "writing skills",
+      "professional writing"
     ],
     "problem solving": [
       "problem solving",
-      "problem-solving"
+      "problem-solving",
+      "analytical problem solving",
+      "solve problems",
+      "troubleshoot issues"
+    ],
+    "attention to detail": [
+      "attention to detail",
+      "detail-oriented",
+      "detail oriented",
+      "accuracy",
+      "organized work"
+    ],
+    "organization": [
+      "organization",
+      "organizational skills",
+      "organized",
+      "multi-task",
+      "multitask",
+      "time management",
+      "prioritization"
+    ],
+    "independent work": [
+      "independent work",
+      "work independently",
+      "self starter",
+      "self-starter",
+      "proactive",
+      "initiative"
+    ],
+    "adaptability": [
+      "adaptability",
+      "adaptable",
+      "fast-paced environment",
+      "changing priorities",
+      "flexibility"
+    ]
+  },
+
+  "Research and Evaluation": {
+    "research": [
+      "research",
+      "research experience",
+      "research assistant",
+      "academic research"
+    ],
+    "user research": [
+      "user research",
+      "usability testing",
+      "user testing",
+      "ux research",
+      "user interviews"
+    ],
+    "survey analysis": [
+      "survey analysis",
+      "survey data",
+      "questionnaire",
+      "survey design"
+    ],
+    "qualitative analysis": [
+      "qualitative analysis",
+      "qualitative coding",
+      "thematic analysis",
+      "content analysis"
+    ],
+    "quantitative analysis": [
+      "quantitative analysis",
+      "quantitative research",
+      "numerical analysis"
+    ],
+    "data labeling": [
+      "data labeling",
+      "labeling data",
+      "annotation",
+      "data annotation",
+      "coded data"
+    ],
+    "literature review": [
+      "literature review",
+      "desk research",
+      "secondary research"
+    ]
+  },
+
+  "Cybersecurity and IT": {
+    "cybersecurity": [
+      "cybersecurity",
+      "information security",
+      "security analysis",
+      "security awareness"
+    ],
+    "identity management": [
+      "identity management",
+      "access management",
+      "iam",
+      "active directory",
+      "microsoft entra",
+      "azure ad"
+    ],
+    "microsoft 365": [
+      "microsoft 365",
+      "office 365",
+      "m365",
+      "sharepoint",
+      "teams",
+      "outlook"
+    ],
+    "it support": [
+      "it support",
+      "technical support",
+      "help desk",
+      "troubleshooting support"
+    ],
+    "system administration": [
+      "system administration",
+      "systems administration",
+      "admin support",
+      "user provisioning"
     ]
   },
 
   "GIS": {
     "gis": [
       "gis",
-      "geographic information systems"
+      "geographic information systems",
+      "geographic information system"
     ],
     "arcgis": [
-      "arcgis"
+      "arcgis",
+      "arcgis pro",
+      "esri"
     ],
     "qgis": [
       "qgis"
     ],
     "spatial analysis": [
       "spatial analysis",
-      "spatial analytics"
+      "spatial analytics",
+      "spatial data"
     ],
     "geospatial": [
       "geospatial",
-      "geospatial analysis"
+      "geospatial analysis",
+      "geospatial data"
     ],
     "mapping": [
       "mapping",
-      "map creation"
+      "map creation",
+      "cartography",
+      "map visualization"
     ]
   }
 }

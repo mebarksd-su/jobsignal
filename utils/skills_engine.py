@@ -23,6 +23,8 @@ DISPLAY_NAMES = {
     "html": "HTML",
     "css": "CSS",
     "c++": "C++",
+    "c#": "C#",
+    "r": "R",
     "power bi": "Power BI",
     "tableau": "Tableau",
     "python": "Python",
@@ -31,7 +33,31 @@ DISPLAY_NAMES = {
     "github": "GitHub",
     "streamlit": "Streamlit",
     "arcgis": "ArcGIS",
-    "qgis": "QGIS"
+    "qgis": "QGIS",
+    "mysql": "MySQL",
+    "postgresql": "PostgreSQL",
+    "sql server": "SQL Server",
+    "sqlite": "SQLite",
+    "mongodb": "MongoDB",
+    "etl": "ETL",
+    "a/b testing": "A/B Testing",
+    "crm": "CRM",
+    "fp&a": "FP&A",
+    "gis": "GIS",
+    "qa": "QA",
+    "microsoft 365": "Microsoft 365",
+    "active directory": "Active Directory",
+    "microsoft entra": "Microsoft Entra",
+    "azure": "Azure",
+    "s3": "Amazon S3",
+    "ec2": "Amazon EC2",
+    "lambda": "AWS Lambda",
+    "javascript": "JavaScript",
+    "typescript": "TypeScript",
+    "java": "Java",
+    "bash": "Bash",
+    "docker": "Docker",
+    "linux": "Linux"
 }
 
 
@@ -73,7 +99,12 @@ def iter_taxonomy_skills():
 
         elif isinstance(skill_group, dict):
             for canonical_skill, aliases in skill_group.items():
-                yield category, canonical_skill, aliases
+                if isinstance(aliases, list):
+                    yield category, canonical_skill, aliases
+                elif isinstance(aliases, str):
+                    yield category, canonical_skill, [aliases]
+                else:
+                    yield category, canonical_skill, [canonical_skill]
 
 
 def extract_skills(text):
