@@ -2,8 +2,17 @@ import os
 import pandas as pd
 
 
-
 DATA_FILE = "data/applications.csv"
+APPLICATION_COLUMNS = [
+    "Date Added",
+    "Company",
+    "Role",
+    "Location",
+    "Work Arrangement",
+    "Status",
+    "Job Link",
+    "Notes"
+]
 
 def normalize_location(location):
 
@@ -70,7 +79,14 @@ def normalize_work_arrangement(work_arrangement):
 def load_applications():
 
     if os.path.exists(DATA_FILE):
-        df = pd.read_csv(DATA_FILE)
+        try:
+            df = pd.read_csv(DATA_FILE)
+        except pd.errors.EmptyDataError:
+            df = pd.DataFrame(columns=APPLICATION_COLUMNS)
+            df.to_csv(DATA_FILE, index=False)
+        except pd.errors.ParserError:
+            df = pd.DataFrame(columns=APPLICATION_COLUMNS)
+            df.to_csv(DATA_FILE, index=False)
 
         if "Last Updated" in df.columns:
             df = df.drop(columns=["Last Updated"])
@@ -91,20 +107,12 @@ def load_applications():
         df.to_csv(DATA_FILE, index=False)
 
     else:
-        df = pd.DataFrame(columns=[
-            "Date Added",
-            "Company",
-            "Role",
-            "Location",
-            "Work Arrangement",
-            "Status",
-            "Job Link",
-            "Notes"
-        ])
+        df = pd.DataFrame(columns=APPLICATION_COLUMNS)
 
     return df
 
 
 def save_applications(df):
 
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     df.to_csv(DATA_FILE, index=False)

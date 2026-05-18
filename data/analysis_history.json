@@ -1627,5 +1627,305 @@
                 "error": ""
             }
         }
+    },
+    {
+        "timestamp": "2026-05-16 20:52:30",
+        "analysis": {
+            "match_score": 87.5,
+            "semantic_score": 6.0,
+            "role_type": "Data Analyst",
+            "final_fit_score": 54.9,
+            "signal_strength": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "TypeScript"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume covers more required skills than it misses, which is a positive signal."
+            ],
+            "fit_analysis": {
+                "label": "Strong Skills, Needs Clearer Wording",
+                "summary": "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
+            },
+            "action_plan": [
+                {
+                    "title": "Make Your Resume Match the Role Better",
+                    "why_it_matters": "Your resume may include relevant experience, but the wording does not clearly mirror the job description yet. Recruiters and screening tools need to quickly see how your background connects to the role.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using language from the job description while keeping the experience truthful. Focus on tools used, outcomes, responsibilities, and who benefited from the work.",
+                    "skills_gained": [
+                        "Resume writing",
+                        "Role alignment",
+                        "Professional positioning"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        },
+                        {
+                            "title": "YouTube: Resume Bullet Writing for Internships",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=resume+bullet+writing+for+internships"
+                        },
+                        {
+                            "title": "TikTok: Resume Bullet Examples",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=resume%20bullet%20examples%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have strong skills in R, Excel, and Artificial Intelligence, which align well with data analysis and AI experience valued in this role.\n- The only missing technical skill is TypeScript, a programming language often used in web development, which is not directly required here.\n- Since this job focuses on data analysis and supplier requalification, prioritizing mastery of Excel and data tools is more important than learning TypeScript right now.\n- To improve, continue building advanced Excel skills, especially with pivot tables, and develop your ability to manage multiple tasks efficiently in fast-paced environments.\n- Gaining practical experience through internships or projects involving quality data analysis will also strengthen your fit for this position.",
+                "error": ""
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-18 16:56:32",
+        "analysis": {
+            "match_score": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "semantic_score": 2.3,
+            "role_type": "Data Analyst",
+            "final_fit_score": 53.4,
+            "signal_strength": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "TypeScript"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume covers more required skills than it misses, which is a positive signal."
+            ],
+            "fit_analysis": {
+                "label": "Strong Skills, Needs Clearer Wording",
+                "summary": "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
+            },
+            "action_plan": [
+                {
+                    "title": "Make Your Resume Match the Role Better",
+                    "why_it_matters": "Your resume may include relevant experience, but the wording does not clearly mirror the job description yet. Recruiters and screening tools need to quickly see how your background connects to the role.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using language from the job description while keeping the experience truthful. Focus on tools used, outcomes, responsibilities, and who benefited from the work.",
+                    "skills_gained": [
+                        "Resume writing",
+                        "Role alignment",
+                        "Professional positioning"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        },
+                        {
+                            "title": "YouTube: Resume Bullet Writing for Internships",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=resume+bullet+writing+for+internships"
+                        },
+                        {
+                            "title": "TikTok: Resume Bullet Examples",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=resume%20bullet%20examples%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have useful skills in R, Excel (including Pivot tables), and Artificial Intelligence, which align well with the job\u2019s requirements and preferred experience.\n- The main gap is TypeScript, a programming language often used for web development and automation; lacking this may limit your ability to contribute to certain projects or team workflows that use it.\n- TypeScript skills matter here because they can enhance your versatility in handling software tools or scripts that support data tasks and business applications.\n- To improve, consider taking an online beginner course or tutorial on TypeScript to build foundational knowledge; even a small project or practice exercises can boost your confidence.\n- Highlight your strong multitasking ability, progress in your STEM degree, and your existing tech skills to show you\u2019re eager and capable of learning necessary new tools quickly.",
+                "error": ""
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-18 17:01:18",
+        "analysis": {
+            "match_score": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "semantic_score": 2.3,
+            "role_type": "Data Analyst",
+            "final_fit_score": 53.4,
+            "signal_strength": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "TypeScript"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume covers more required skills than it misses, which is a positive signal."
+            ],
+            "fit_analysis": {
+                "label": "Strong Skills, Needs Clearer Wording",
+                "summary": "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
+            },
+            "action_plan": [
+                {
+                    "title": "Make Your Resume Match the Role Better",
+                    "why_it_matters": "Your resume may include relevant experience, but the wording does not clearly mirror the job description yet. Recruiters and screening tools need to quickly see how your background connects to the role.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using language from the job description while keeping the experience truthful. Focus on tools used, outcomes, responsibilities, and who benefited from the work.",
+                    "skills_gained": [
+                        "Resume writing",
+                        "Role alignment",
+                        "Professional positioning"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        },
+                        {
+                            "title": "YouTube: Resume Bullet Writing for Internships",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=resume+bullet+writing+for+internships"
+                        },
+                        {
+                            "title": "TikTok: Resume Bullet Examples",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=resume%20bullet%20examples%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have strong skills in R, Excel, and AI, which align well with the job\u2019s focus on data analysis and AI experience.\n- The gap is in TypeScript, a programming language likely used for web or software development tasks; this matters because it helps with building interactive tools or data applications.\n- While you have coding experience (R), adding TypeScript would broaden your technical toolkit and increase your versatility in tech-driven roles.\n- To improve, consider taking an online course or tutorial on TypeScript and practicing small projects to build confidence before applying.\n- Emphasize your ability to quickly learn new tools and manage multiple tasks, as these are key for thriving in fast-paced environments.",
+                "error": ""
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-18 17:04:48",
+        "analysis": {
+            "match_score": 87.5,
+            "semantic_score": 2.3,
+            "role_type": "Data Analyst",
+            "final_fit_score": 53.4,
+            "signal_strength": {
+                "label": "High",
+                "score": 80,
+                "summary": "RoleRadar found a clear resume structure and enough skill evidence to support a reliable analysis."
+            },
+            "matched_skills": [
+                "R",
+                "Excel",
+                "Artificial Intelligence"
+            ],
+            "missing_skills": [
+                "TypeScript"
+            ],
+            "smart_analysis": [
+                "Your resume may not closely match the wording and priorities of this job description yet.",
+                "Your resume covers more required skills than it misses, which is a positive signal."
+            ],
+            "fit_analysis": {
+                "label": "Strong Skills, Needs Clearer Wording",
+                "summary": "You already have many of the right skills for this role, but your resume could do a better job communicating them in the same language used in the job description.",
+                "effort_level": "Moderate Edits",
+                "next_action": "Try rewriting a few resume bullets using keywords and responsibilities from the posting while still keeping everything truthful to your experience."
+            },
+            "action_plan": [
+                {
+                    "title": "Make Your Resume Match the Role Better",
+                    "why_it_matters": "Your resume may include relevant experience, but the wording does not clearly mirror the job description yet. Recruiters and screening tools need to quickly see how your background connects to the role.",
+                    "suggested_project": "Rewrite 2 to 3 resume bullets using language from the job description while keeping the experience truthful. Focus on tools used, outcomes, responsibilities, and who benefited from the work.",
+                    "skills_gained": [
+                        "Resume writing",
+                        "Role alignment",
+                        "Professional positioning"
+                    ],
+                    "resources": [
+                        {
+                            "title": "Harvard Resume and Cover Letter Guide",
+                            "type": "guide",
+                            "url": "https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                        },
+                        {
+                            "title": "Indeed Resume Keywords Guide",
+                            "type": "article",
+                            "url": "https://www.indeed.com/career-advice/resumes-cover-letters/resume-keywords"
+                        },
+                        {
+                            "title": "YouTube: Resume Bullet Writing for Internships",
+                            "type": "video search",
+                            "url": "https://www.youtube.com/results?search_query=resume+bullet+writing+for+internships"
+                        },
+                        {
+                            "title": "TikTok: Resume Bullet Examples",
+                            "type": "short-form video search",
+                            "url": "https://www.tiktok.com/search?q=resume%20bullet%20examples%20for%20students"
+                        }
+                    ],
+                    "difficulty": "Beginner",
+                    "estimated_time": "30 to 60 minutes"
+                }
+            ],
+            "ai_gap_explanation": {
+                "success": true,
+                "result": "- You have strong skills in R, Excel, and AI, which align well with data analysis and automation tasks mentioned in the job. This shows you can handle technical aspects effectively.  \n- The gap is in TypeScript, a programming language often used for web development and interactive tools. This skill matters if the role involves building or maintaining web interfaces, which complements data tasks.  \n- Since you're early in your career, focusing on learning TypeScript through online courses or small projects can quickly boost your versatility and make you more competitive.  \n- Your ability to prioritize tasks and use advanced Excel functions already matches key job requirements, so highlight these strengths alongside your willingness to learn new tools.  \n- Consider joining coding clubs or internships that offer exposure to TypeScript and fast-paced environments to practice multitasking and real-world application.",
+                "error": ""
+            }
+        }
     }
 ]

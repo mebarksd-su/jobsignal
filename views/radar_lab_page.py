@@ -10,10 +10,6 @@ from utils.skills_engine import (
     extract_skills,
     calculate_skill_frequency
 )
-from utils.semantic_matcher import calculate_semantic_match
-from utils.smart_gap_analyzer import generate_gap_analysis
-from utils.fit_classifier import classify_job_fit
-from utils.action_plan_engine import generate_action_plan
 from utils.analysis_storage import (
     save_latest_analysis,
     load_latest_analysis,
@@ -21,17 +17,14 @@ from utils.analysis_storage import (
     load_analysis_history
 )
 from utils.skill_trend_engine import analyze_skill_trends
-from utils.score_engine import calculate_final_fit_score
-from utils.role_classifier import classify_role_type
-from utils.critical_skills import ROLE_CRITICAL_SKILLS
 from utils.rewrite_templates import generate_resume_bullet
 from utils.resume_parser import extract_resume_text
 from utils.section_parser import extract_skills_section
 from utils.signal_strength import calculate_signal_strength
+from utils.radar_analysis_engine import run_radar_analysis
 from utils.openai_client import (
     rewrite_resume_bullet_with_ai,
-    summarize_job_description_with_ai,
-    explain_resume_gaps_with_ai
+    summarize_job_description_with_ai
 )
 
 
@@ -107,73 +100,33 @@ def render_radar_lab_page():
         if match_job_description.strip() == "":
             st.error("Please paste a job description before calculating a match score.")
             st.stop()
+        with st.spinner("RoleRadar is running analysis..."):
 
-        (
-            match_score,
-            matched_skills,
-            missing_skills,
-            critical_matched,
-            critical_missing
-        ) = calculate_match_score(
-            resume_text,
-            match_job_description
-        )
-        semantic_score = calculate_semantic_match(
-            resume_text,
-            match_job_description
-        )
+            analysis_result = run_radar_analysis(
+                resume_text,
+                match_job_description
+            )
 
-        role_type = classify_role_type(match_job_description)
-        critical_skills = ROLE_CRITICAL_SKILLS.get(role_type, [])
+        semantic_score = analysis_result["semantic_score"]
+        signal_strength = analysis_result["signal_strength_score"]
+        final_fit_score = analysis_result["final_fit_score"]
+        role_type = analysis_result["detected_role_type"]
 
-        missing_critical_skills = []
+        matched_skills = analysis_result["matched_skills"]
+        missing_skills = analysis_result["missing_skills"]
 
-        for skill in critical_skills:
-            if skill.lower() not in [
-                s.lower() for s in matched_skills
-            ]:
-                missing_critical_skills.append(skill)
+        fit_analysis = analysis_result["fit_analysis"]
+        action_plan = analysis_result["action_plan"]
+        ai_gap_explanation = analysis_result["ai_gap_explanation"]
 
-        final_fit_score = calculate_final_fit_score(
-            match_score,
-            semantic_score
-        )
-        signal_strength = calculate_signal_strength(
-            matched_skills,
-            missing_skills,
-            skills_section_found,
-            semantic_score
-        )
-        smart_analysis = generate_gap_analysis(
-            matched_skills,
-            missing_skills,
-            semantic_score
-        )
-        fit_analysis = classify_job_fit(
-            match_score,
-            semantic_score,
-            matched_skills,
-            missing_skills
-        )
-        action_plan = generate_action_plan(
-            fit_analysis,
-            missing_skills,
-            semantic_score
-        )
+        match_score = analysis_result["match_score"]
 
-        ai_gap_explanation = {
-            "success": False,
-            "result": "",
-            "error": "No AI gap explanation generated."
-        }
+        if isinstance(match_score, dict):
+            match_score = match_score.get("score", 0)
 
-        if missing_skills:
-            with st.spinner("RoleRadar is explaining your resume gaps..."):
-                ai_gap_explanation = explain_resume_gaps_with_ai(
-                    missing_skills,
-                    matched_skills,
-                    match_job_description
-                )
+        critical_matched = analysis_result["critical_matched"]
+        critical_missing = analysis_result["critical_missing"]
+        smart_analysis = analysis_result["smart_analysis"]
 
         latest_analysis = {
             "match_score": match_score,
@@ -389,10 +342,6 @@ def render_radar_lab_page():
             for record in analysis_history
         ]
 
-        semantic_scores = [
-            record["analysis"]["semantic_score"]
-            for record in analysis_history
-        ]
 
         latest_record = analysis_history[-1]
         latest_score = latest_record["analysis"].get(
